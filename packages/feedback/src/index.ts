@@ -26,9 +26,14 @@ export {
   generateCssSelector,
   generateFriendlyName,
   getElementInfo,
+  getElementLabel,
   findElementBySelector,
   shouldExcludeElement,
   getElementBounds,
+  // Performance metrics
+  getNameGenerationMetrics,
+  resetNameGenerationMetrics,
+  clearNameCaches,
 } from './lib/element-picker-utils'
 
 // Screenshot capture utilities
