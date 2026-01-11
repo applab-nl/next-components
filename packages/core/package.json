@@ -1,0 +1,61 @@
+{
+  "name": "@nextstack/core",
+  "version": "0.1.0",
+  "description": "Core utilities, auth adapters, and configuration for @nextstack packages",
+  "type": "module",
+  "main": "./dist/index.js",
+  "module": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js"
+    },
+    "./auth": {
+      "types": "./dist/auth/index.d.ts",
+      "import": "./dist/auth/index.js"
+    },
+    "./auth/supabase": {
+      "types": "./dist/auth/adapters/supabase.d.ts",
+      "import": "./dist/auth/adapters/supabase.js"
+    },
+    "./auth/clerk": {
+      "types": "./dist/auth/adapters/clerk.d.ts",
+      "import": "./dist/auth/adapters/clerk.js"
+    },
+    "./auth/next-auth": {
+      "types": "./dist/auth/adapters/next-auth.d.ts",
+      "import": "./dist/auth/adapters/next-auth.js"
+    }
+  },
+  "files": ["dist"],
+  "scripts": {
+    "build": "tsc",
+    "dev": "tsc --watch",
+    "typecheck": "tsc --noEmit",
+    "lint": "eslint src/",
+    "lint:fix": "eslint src/ --fix",
+    "clean": "rm -rf dist .turbo"
+  },
+  "peerDependencies": {
+    "@prisma/client": ">=5.0.0",
+    "react": ">=18.0.0"
+  },
+  "peerDependenciesMeta": {
+    "@supabase/supabase-js": {
+      "optional": true
+    },
+    "@clerk/nextjs": {
+      "optional": true
+    },
+    "next-auth": {
+      "optional": true
+    }
+  },
+  "devDependencies": {
+    "@prisma/client": "^6.2.1",
+    "@types/react": "^19.0.4",
+    "react": "^19.0.0",
+    "typescript": "^5.7.3"
+  }
+}

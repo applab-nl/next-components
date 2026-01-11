@@ -1,0 +1,45 @@
+{
+  "name": "@nextstack/audit",
+  "version": "0.1.0",
+  "description": "Audit logging system with sensitive field sanitization",
+  "type": "module",
+  "main": "./dist/index.js",
+  "module": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js"
+    },
+    "./admin": {
+      "types": "./dist/admin/index.d.ts",
+      "import": "./dist/admin/index.js"
+    }
+  },
+  "files": ["dist", "prisma"],
+  "scripts": {
+    "build": "tsc",
+    "dev": "tsc --watch",
+    "typecheck": "tsc --noEmit",
+    "lint": "eslint src/",
+    "lint:fix": "eslint src/ --fix",
+    "clean": "rm -rf dist .turbo"
+  },
+  "dependencies": {
+    "@nextstack/core": "workspace:*"
+  },
+  "peerDependencies": {
+    "@prisma/client": ">=5.0.0",
+    "lucide-react": ">=0.300.0",
+    "next": ">=14.0.0",
+    "react": ">=18.0.0"
+  },
+  "devDependencies": {
+    "@prisma/client": "^6.2.1",
+    "@types/react": "^19.0.4",
+    "lucide-react": "^0.469.0",
+    "next": "^15.1.4",
+    "react": "^19.0.0",
+    "typescript": "^5.7.3"
+  }
+}

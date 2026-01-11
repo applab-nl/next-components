@@ -1,0 +1,25 @@
+{
+  "extends": "./tsconfig.base.json",
+  "compilerOptions": {
+    "baseUrl": ".",
+    "paths": {
+      "@nextstack/core": ["packages/core/src"],
+      "@nextstack/devtools": ["packages/devtools/src"],
+      "@nextstack/feedback": ["packages/feedback/src"],
+      "@nextstack/whats-new": ["packages/whats-new/src"],
+      "@nextstack/theme": ["packages/theme/src"],
+      "@nextstack/audit": ["packages/audit/src"],
+      "@nextstack/cli": ["packages/cli/src"]
+    }
+  },
+  "include": [],
+  "references": [
+    { "path": "packages/core" },
+    { "path": "packages/devtools" },
+    { "path": "packages/feedback" },
+    { "path": "packages/whats-new" },
+    { "path": "packages/theme" },
+    { "path": "packages/audit" },
+    { "path": "packages/cli" }
+  ]
+}

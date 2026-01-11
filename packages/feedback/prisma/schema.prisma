@@ -1,0 +1,104 @@
+// Feedback package Prisma schema
+// Copy these models into your main prisma/schema.prisma file
+
+model Feedback {
+  id                  String    @id @default(cuid())
+
+  // Content
+  message             String    @db.Text
+  pageUrl             String
+
+  // Element reference (optional)
+  elementXPath        String?   @db.VarChar(2000)
+  elementSelector     String?   @db.VarChar(500)
+  elementTagName      String?   @db.VarChar(50)
+  elementFriendlyName String?   @db.VarChar(200)
+
+  // Screenshot (optional)
+  screenshotUrl       String?
+
+  // Attribution
+  userId              String
+  userEmail           String    // Denormalized (survives user deletion)
+  userName            String?   // Denormalized
+
+  // Multi-tenancy (optional)
+  organizationId      String?
+
+  // Issue tracker integration
+  externalIssueId     String?
+  externalIssueUrl    String?
+  issueProvider       String?   // 'linear' | 'jira' | 'github'
+  issueCreatedAt      DateTime?
+  issueCreationError  String?
+
+  // Public suggestions & voting
+  isPublicSuggestion  Boolean   @default(false)
+  voteScore           Int       @default(0)
+
+  // Status tracking
+  status              String    @default("pending") // pending, reviewed, resolved, rejected
+  adminNotes          String?   @db.Text
+  reviewedBy          String?
+  reviewedAt          DateTime?
+
+  // Timestamps
+  createdAt           DateTime  @default(now())
+  updatedAt           DateTime  @updatedAt
+
+  // Relations
+  votes               FeedbackVote[]
+
+  @@index([userId])
+  @@index([organizationId])
+  @@index([status])
+  @@index([isPublicSuggestion, voteScore(sort: Desc)])
+  @@index([createdAt(sort: Desc)])
+}
+
+model FeedbackVote {
+  id         String   @id @default(cuid())
+  feedbackId String
+  userId     String
+  voteType   String   // 'up' | 'down'
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+
+  feedback   Feedback @relation(fields: [feedbackId], references: [id], onDelete: Cascade)
+
+  @@unique([feedbackId, userId])
+  @@index([feedbackId])
+  @@index([userId])
+}
+
+model IssueTrackerConfig {
+  id                    String   @id @default(cuid())
+  organizationId        String?  @unique  // null = global config
+
+  provider              String?  // 'linear' | 'jira' | 'github'
+  isEnabled             Boolean  @default(false)
+
+  // Linear
+  linearApiKeyEncrypted String?
+  linearTeamId          String?
+  linearDefaultLabels   String[] @default(["user-feedback"])
+
+  // Jira
+  jiraHost              String?
+  jiraEmail             String?
+  jiraApiTokenEncrypted String?
+  jiraProjectKey        String?
+  jiraIssueType         String?  @default("Task")
+  jiraDefaultLabels     String[] @default([])
+
+  // GitHub Issues
+  githubTokenEncrypted  String?
+  githubRepo            String?  // owner/repo
+  githubDefaultLabels   String[] @default(["feedback"])
+
+  // Encryption
+  encryptionIv          String?
+
+  createdAt             DateTime @default(now())
+  updatedAt             DateTime @updatedAt
+}

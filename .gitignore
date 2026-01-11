@@ -1,0 +1,116 @@
+# ===================
+# Dependencies
+# ===================
+node_modules/
+.pnpm-store/
+
+# ===================
+# Build outputs
+# ===================
+dist/
+build/
+.next/
+out/
+
+# ===================
+# Turbo
+# ===================
+.turbo/
+
+# ===================
+# TypeScript
+# ===================
+*.tsbuildinfo
+tsconfig.tsbuildinfo
+
+# ===================
+# Testing
+# ===================
+coverage/
+.nyc_output/
+*.lcov
+
+# ===================
+# IDE & Editors
+# ===================
+.idea/
+.vscode/
+*.swp
+*.swo
+*~
+.project
+.classpath
+.settings/
+
+# ===================
+# OS files
+# ===================
+.DS_Store
+Thumbs.db
+Desktop.ini
+
+# ===================
+# Environment
+# ===================
+.env
+.env.local
+.env.*.local
+.env.development
+.env.production
+
+# ===================
+# Logs
+# ===================
+*.log
+npm-debug.log*
+pnpm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+lerna-debug.log*
+
+# ===================
+# Cache
+# ===================
+.cache/
+.eslintcache
+.stylelintcache
+.prettiercache
+
+# ===================
+# Temporary files
+# ===================
+tmp/
+temp/
+*.tmp
+*.temp
+
+# ===================
+# Prisma
+# ===================
+prisma/migrations/.migration_lock.toml
+
+# ===================
+# Package manager
+# ===================
+# Uncomment if using yarn
+# yarn.lock
+
+# ===================
+# Debug
+# ===================
+.debug/
+debug.log
+
+# ===================
+# Playwright
+# ===================
+playwright-report/
+playwright/.cache/
+test-results/
+
+# ===================
+# Misc
+# ===================
+*.pid
+*.seed
+*.pid.lock

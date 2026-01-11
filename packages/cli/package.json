@@ -1,0 +1,30 @@
+{
+  "name": "@nextstack/cli",
+  "version": "0.1.0",
+  "description": "CLI for @nextstack package setup and migrations",
+  "type": "module",
+  "bin": {
+    "nextstack": "./dist/bin.js"
+  },
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "files": ["dist"],
+  "scripts": {
+    "build": "tsc",
+    "dev": "tsc --watch",
+    "typecheck": "tsc --noEmit",
+    "lint": "eslint src/",
+    "lint:fix": "eslint src/ --fix",
+    "clean": "rm -rf dist .turbo"
+  },
+  "dependencies": {
+    "commander": "^12.1.0",
+    "prompts": "^2.4.2",
+    "picocolors": "^1.1.1"
+  },
+  "devDependencies": {
+    "@types/node": "^22.10.5",
+    "@types/prompts": "^2.4.9",
+    "typescript": "^5.7.3"
+  }
+}

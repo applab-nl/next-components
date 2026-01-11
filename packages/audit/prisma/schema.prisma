@@ -1,0 +1,49 @@
+// Audit package Prisma schema
+// Copy these models into your main prisma/schema.prisma file
+
+model AuditLog {
+  id             String   @id @default(cuid())
+
+  // WHO
+  userId         String?
+  userEmail      String   // Denormalized (survives user deletion)
+  userName       String?
+
+  // WHEN
+  timestamp      DateTime @default(now())
+
+  // WHERE
+  organizationId String?
+  ipAddress      String?
+  userAgent      String?
+
+  // WHAT
+  entityType     String   // 'User', 'Feedback', 'Settings', etc.
+  entityId       String?
+  entityName     String?
+  action         String   // 'CREATE', 'UPDATE', 'DELETE', 'BULK_CREATE', 'BULK_UPDATE', 'BULK_DELETE', 'EXPORT', 'IMPORT', 'LOGIN', 'LOGOUT', 'VIEW'
+
+  // DETAILS
+  changes        Json?    // { before: {...}, after: {...} }
+  metadata       Json?    // Additional context
+
+  @@index([organizationId])
+  @@index([userId])
+  @@index([timestamp(sort: Desc)])
+  @@index([entityType])
+  @@index([action])
+  @@index([organizationId, timestamp(sort: Desc)])
+}
+
+// Enum for audit actions (use string in model for flexibility, but this documents valid values)
+// CREATE - Single entity created
+// UPDATE - Single entity updated
+// DELETE - Single entity deleted
+// BULK_CREATE - Multiple entities created
+// BULK_UPDATE - Multiple entities updated
+// BULK_DELETE - Multiple entities deleted
+// EXPORT - Data exported
+// IMPORT - Data imported
+// LOGIN - User logged in
+// LOGOUT - User logged out
+// VIEW - Sensitive data accessed (optional for compliance)
