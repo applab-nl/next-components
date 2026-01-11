@@ -1,6 +1,6 @@
 import type { PrismaClient } from '@prisma/client'
 import { getRequestMetadata } from '@nextstack/core'
-import type { AuditLogInput, AuditLog } from '../types'
+import type { AuditLogInput, AuditLog, AuditAction } from '../types'
 import { sanitizeChanges } from './sanitize'
 
 /**
@@ -133,4 +133,80 @@ export async function createBulkAuditLog(
     },
     headers
   )
+}
+
+/**
+ * Bulk action types for type checking
+ */
+const BULK_ACTIONS: readonly AuditAction[] = [
+  'BULK_CREATE',
+  'BULK_UPDATE',
+  'BULK_DELETE',
+  'IMPORT',
+  'EXPORT',
+] as const
+
+/**
+ * Type guard to check if an action is a bulk action
+ *
+ * @example
+ * ```ts
+ * if (isBulkAction(log.action)) {
+ *   // Handle bulk operation display differently
+ *   console.log(`Bulk operation affecting ${log.metadata?.bulkCount} items`)
+ * }
+ * ```
+ */
+export function isBulkAction(action: AuditAction): boolean {
+  return BULK_ACTIONS.includes(action)
+}
+
+/**
+ * Format entity name for display in audit logs
+ *
+ * Extracts a human-readable name from an entity object using
+ * common patterns (name, email, title) or entity-specific logic.
+ *
+ * @param entityType - The type of entity
+ * @param entity - The entity object to extract name from
+ * @returns Human-readable entity name
+ *
+ * @example
+ * ```ts
+ * formatEntityName('User', { name: 'John Doe', email: 'john@example.com' })
+ * // Returns: "John Doe"
+ *
+ * formatEntityName('Feedback', { title: 'Bug report', id: 'abc123' })
+ * // Returns: "Bug report"
+ *
+ * formatEntityName('Session', { id: 'long-uuid-here' })
+ * // Returns: "long-uui" (first 8 chars of ID)
+ * ```
+ */
+export function formatEntityName(entityType: string, entity: unknown): string {
+  if (!entity || typeof entity !== 'object') return 'Unknown'
+
+  const obj = entity as Record<string, unknown>
+
+  // Common name patterns (check in order of preference)
+  if (typeof obj.name === 'string' && obj.name) return obj.name
+  if (typeof obj.title === 'string' && obj.title) return obj.title
+  if (typeof obj.email === 'string' && obj.email) return obj.email
+  if (typeof obj.label === 'string' && obj.label) return obj.label
+
+  // Entity-specific patterns
+  if (entityType === 'Sprint' && typeof obj.sprintNumber === 'number') {
+    return `Sprint ${obj.sprintNumber}`
+  }
+
+  if (entityType === 'Version' && typeof obj.version === 'string') {
+    return `v${obj.version}`
+  }
+
+  // Fallback to truncated ID
+  if (typeof obj.id === 'string' && obj.id) {
+    return obj.id.slice(0, 8)
+  }
+
+  return 'Unknown'
 }

@@ -4,6 +4,8 @@ export {
   createAuditLog,
   createAuditLogInTransaction,
   createBulkAuditLog,
+  isBulkAction,
+  formatEntityName,
 } from './lib/audit-log'
 
 export { createAuditService } from './services/audit-service'
