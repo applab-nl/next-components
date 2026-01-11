@@ -65,33 +65,34 @@ describe('WhatsNewDialog', () => {
     localStorage.clear()
   })
 
-  it('should render trigger button with default text', () => {
-    render(<WhatsNewDialog />)
+  it('should render dialog header with title when open', () => {
+    render(<WhatsNewDialog open={true} />)
 
     expect(screen.getByText("What's New")).toBeInTheDocument()
   })
 
-  it('should show badge with new entry count when there are new entries', () => {
+  it('should show entry count in header when open', async () => {
     // No last visit means all entries are "new"
-    render(<WhatsNewDialog />)
-
-    expect(screen.getByText('2')).toBeInTheDocument()
-  })
-
-  it('should open dialog when trigger is clicked', async () => {
-    render(<WhatsNewDialog />)
-
-    fireEvent.click(screen.getByText("What's New"))
+    render(<WhatsNewDialog open={true} />)
 
     await waitFor(() => {
-      expect(screen.getAllByText("What's New").length).toBeGreaterThan(1) // Button + Header
+      expect(screen.getByText(/2 new update/)).toBeInTheDocument()
     })
   })
 
-  it('should display entries when dialog is open', async () => {
-    render(<WhatsNewDialog />)
+  it('should support controlled open state', async () => {
+    const onOpenChange = vi.fn()
+    render(<WhatsNewDialog open={true} onOpenChange={onOpenChange} />)
 
-    fireEvent.click(screen.getByText("What's New"))
+    // Click close button
+    const closeButton = screen.getByLabelText('Close')
+    fireEvent.click(closeButton)
+
+    expect(onOpenChange).toHaveBeenCalledWith(false)
+  })
+
+  it('should display entries when dialog is open', async () => {
+    render(<WhatsNewDialog open={true} />)
 
     await waitFor(() => {
       expect(screen.getByText('New Feature')).toBeInTheDocument()
@@ -108,10 +109,10 @@ describe('WhatsNewDialog', () => {
       vote: mockVote,
     })
 
-    render(<WhatsNewDialog />)
-    fireEvent.click(screen.getByText("What's New"))
+    render(<WhatsNewDialog open={true} />)
 
-    expect(screen.getByText('Loading...')).toBeInTheDocument()
+    // Loading shows a spinner, not text
+    expect(screen.getByRole('dialog')).toBeInTheDocument()
   })
 
   it('should show empty state when no entries', async () => {
@@ -123,50 +124,38 @@ describe('WhatsNewDialog', () => {
       vote: mockVote,
     })
 
-    render(<WhatsNewDialog />)
-    fireEvent.click(screen.getByText("What's New"))
+    render(<WhatsNewDialog open={true} />)
 
     await waitFor(() => {
-      expect(screen.getByText('No updates yet')).toBeInTheDocument()
+      expect(screen.getByText('No updates available yet.')).toBeInTheDocument()
     })
   })
 
   it('should close dialog when X button is clicked', async () => {
-    render(<WhatsNewDialog />)
+    const onOpenChange = vi.fn()
+    render(<WhatsNewDialog open={true} onOpenChange={onOpenChange} />)
 
-    // Open dialog
-    fireEvent.click(screen.getByText("What's New"))
     await waitFor(() => {
       expect(screen.getByText('New Feature')).toBeInTheDocument()
     })
 
-    // Find and click close button (has X icon)
-    const closeButtons = screen.getAllByRole('button')
-    const closeButton = closeButtons.find(
-      (btn) => btn.querySelector('svg') && btn.closest('.rounded-full')
-    )
-    if (closeButton) {
-      fireEvent.click(closeButton)
-    }
+    // Find and click close button
+    const closeButton = screen.getByLabelText('Close')
+    fireEvent.click(closeButton)
 
-    // Dialog should close
-    await waitFor(() => {
-      expect(screen.queryByText('New Feature')).not.toBeInTheDocument()
-    })
+    expect(onOpenChange).toHaveBeenCalledWith(false)
   })
 
-  it('should render custom trigger when provided', () => {
-    render(<WhatsNewDialog trigger={<button>Custom Trigger</button>} />)
+  it('should not render anything when closed', () => {
+    render(<WhatsNewDialog open={false} />)
 
-    expect(screen.getByText('Custom Trigger')).toBeInTheDocument()
     expect(screen.queryByText("What's New")).not.toBeInTheDocument()
   })
 
   it('should call vote when upvote button is clicked', async () => {
-    mockVote.mockResolvedValue(undefined)
+    mockVote.mockResolvedValue({ upvotes: 6, downvotes: 1 })
 
-    render(<WhatsNewDialog />)
-    fireEvent.click(screen.getByText("What's New"))
+    render(<WhatsNewDialog open={true} />)
 
     await waitFor(() => {
       expect(screen.getByText('New Feature')).toBeInTheDocument()
@@ -184,10 +173,9 @@ describe('WhatsNewDialog', () => {
   })
 
   it('should call vote when downvote button is clicked', async () => {
-    mockVote.mockResolvedValue(undefined)
+    mockVote.mockResolvedValue({ upvotes: 5, downvotes: 2 })
 
-    render(<WhatsNewDialog />)
-    fireEvent.click(screen.getByText("What's New"))
+    render(<WhatsNewDialog open={true} />)
 
     await waitFor(() => {
       expect(screen.getByText('New Feature')).toBeInTheDocument()
@@ -205,10 +193,9 @@ describe('WhatsNewDialog', () => {
   })
 
   it('should toggle vote off when clicking same vote type', async () => {
-    mockVote.mockResolvedValue(undefined)
+    mockVote.mockResolvedValue({ upvotes: 2, downvotes: 0 })
 
-    render(<WhatsNewDialog />)
-    fireEvent.click(screen.getByText("What's New"))
+    render(<WhatsNewDialog open={true} />)
 
     await waitFor(() => {
       expect(screen.getByText('Bug Fix')).toBeInTheDocument()
@@ -227,17 +214,16 @@ describe('WhatsNewDialog', () => {
   })
 
   it('should show linked feedback count', async () => {
-    render(<WhatsNewDialog />)
-    fireEvent.click(screen.getByText("What's New"))
+    render(<WhatsNewDialog open={true} />)
 
     await waitFor(() => {
-      expect(screen.getByText('2 linked feedback')).toBeInTheDocument()
+      // New implementation shows "Based on X user requests"
+      expect(screen.getByText(/Based on 2 user requests/)).toBeInTheDocument()
     })
   })
 
   it('should hide voting buttons when enableVoting is false', async () => {
-    render(<WhatsNewDialog enableVoting={false} />)
-    fireEvent.click(screen.getByText("What's New"))
+    render(<WhatsNewDialog open={true} enableVoting={false} />)
 
     await waitFor(() => {
       expect(screen.getByText('New Feature')).toBeInTheDocument()
@@ -248,22 +234,24 @@ describe('WhatsNewDialog', () => {
   })
 
   it('should hide linked feedback count when showLinkedFeedbackCount is false', async () => {
-    render(<WhatsNewDialog showLinkedFeedbackCount={false} />)
-    fireEvent.click(screen.getByText("What's New"))
+    render(<WhatsNewDialog open={true} showLinkedFeedbackCount={false} />)
 
     await waitFor(() => {
       expect(screen.getByText('New Feature')).toBeInTheDocument()
     })
 
-    expect(screen.queryByText('2 linked feedback')).not.toBeInTheDocument()
+    expect(screen.queryByText(/Based on 2 user requests/)).not.toBeInTheDocument()
   })
 
-  it('should update localStorage when dialog is opened', async () => {
-    render(<WhatsNewDialog />)
+  it('should update localStorage when dialog is closed', async () => {
+    const onOpenChange = vi.fn()
+    render(<WhatsNewDialog open={true} onOpenChange={onOpenChange} />)
 
     expect(localStorage.getItem('nextstack-whats-new-last-visit')).toBeNull()
 
-    fireEvent.click(screen.getByText("What's New"))
+    // Close dialog - last visit should be updated on close
+    const closeButton = screen.getByLabelText('Close')
+    fireEvent.click(closeButton)
 
     await waitFor(() => {
       expect(localStorage.getItem('nextstack-whats-new-last-visit')).not.toBeNull()
@@ -277,8 +265,7 @@ describe('WhatsNewDialog', () => {
       new Date('2024-01-12').toISOString()
     )
 
-    render(<WhatsNewDialog />)
-    fireEvent.click(screen.getByText("What's New"))
+    render(<WhatsNewDialog open={true} />)
 
     await waitFor(() => {
       // entry-1 (Jan 15) should be new, entry-2 (Jan 10) should be older
@@ -290,8 +277,7 @@ describe('WhatsNewDialog', () => {
 
   it('should show all entries when no last visit is set', async () => {
     // Without a last visit, all entries should be shown as "new"
-    render(<WhatsNewDialog />)
-    fireEvent.click(screen.getByText("What's New"))
+    render(<WhatsNewDialog open={true} />)
 
     await waitFor(() => {
       expect(screen.getByText('New Feature')).toBeInTheDocument()
@@ -299,20 +285,18 @@ describe('WhatsNewDialog', () => {
     })
   })
 
-  it('should display New badge for new entries', async () => {
+  it('should display NEW badge for new entries', async () => {
     // No last visit means all entries are new
-    render(<WhatsNewDialog />)
-    fireEvent.click(screen.getByText("What's New"))
+    render(<WhatsNewDialog open={true} />)
 
     await waitFor(() => {
-      const newBadges = screen.getAllByText('New')
-      expect(newBadges.length).toBe(2) // Both entries should have New badge
+      const newBadges = screen.getAllByText('NEW')
+      expect(newBadges.length).toBe(2) // Both entries should have NEW badge
     })
   })
 
   it('should format dates correctly', async () => {
-    render(<WhatsNewDialog />)
-    fireEvent.click(screen.getByText("What's New"))
+    render(<WhatsNewDialog open={true} />)
 
     await waitFor(() => {
       // Date should be formatted (locale dependent, so just check it exists)

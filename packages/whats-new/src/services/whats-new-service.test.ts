@@ -11,6 +11,7 @@ describe('createWhatsNewService', () => {
   const mockPrisma = {
     whatsNewEntry: {
       findMany: vi.fn(),
+      findUnique: vi.fn(),
       update: vi.fn(),
     },
     whatsNewVote: {
@@ -110,6 +111,10 @@ describe('createWhatsNewService', () => {
     })
 
     it('should create a new upvote', async () => {
+      // Mock entry exists check
+      mockPrisma.whatsNewEntry.findUnique
+        .mockResolvedValueOnce({ id: 'entry-1', upvotes: 0, downvotes: 0 }) // Entry check
+        .mockResolvedValueOnce({ upvotes: 1, downvotes: 0 }) // Final count fetch
       mockPrisma.whatsNewVote.findUnique.mockResolvedValue(null)
       mockPrisma.whatsNewEntry.update.mockResolvedValue({ upvotes: 1, downvotes: 0 })
 
@@ -127,6 +132,9 @@ describe('createWhatsNewService', () => {
     })
 
     it('should create a new downvote', async () => {
+      mockPrisma.whatsNewEntry.findUnique
+        .mockResolvedValueOnce({ id: 'entry-1', upvotes: 0, downvotes: 0 })
+        .mockResolvedValueOnce({ upvotes: 0, downvotes: 1 })
       mockPrisma.whatsNewVote.findUnique.mockResolvedValue(null)
       mockPrisma.whatsNewEntry.update.mockResolvedValue({ upvotes: 0, downvotes: 1 })
 
@@ -143,6 +151,9 @@ describe('createWhatsNewService', () => {
     })
 
     it('should remove an existing vote when voteType is null', async () => {
+      mockPrisma.whatsNewEntry.findUnique
+        .mockResolvedValueOnce({ id: 'entry-1', upvotes: 1, downvotes: 0 })
+        .mockResolvedValueOnce({ upvotes: 0, downvotes: 0 })
       mockPrisma.whatsNewVote.findUnique.mockResolvedValue({
         id: 'vote-1',
         voteType: 'up',
@@ -162,6 +173,9 @@ describe('createWhatsNewService', () => {
     })
 
     it('should change vote from up to down', async () => {
+      mockPrisma.whatsNewEntry.findUnique
+        .mockResolvedValueOnce({ id: 'entry-1', upvotes: 1, downvotes: 0 })
+        .mockResolvedValueOnce({ upvotes: 0, downvotes: 1 })
       mockPrisma.whatsNewVote.findUnique.mockResolvedValue({
         id: 'vote-1',
         voteType: 'up',
@@ -182,6 +196,9 @@ describe('createWhatsNewService', () => {
     })
 
     it('should change vote from down to up', async () => {
+      mockPrisma.whatsNewEntry.findUnique
+        .mockResolvedValueOnce({ id: 'entry-1', upvotes: 0, downvotes: 1 })
+        .mockResolvedValueOnce({ upvotes: 1, downvotes: 0 })
       mockPrisma.whatsNewVote.findUnique.mockResolvedValue({
         id: 'vote-1',
         voteType: 'down',
@@ -202,22 +219,24 @@ describe('createWhatsNewService', () => {
     })
 
     it('should not change anything when voting same as existing', async () => {
+      mockPrisma.whatsNewEntry.findUnique
+        .mockResolvedValueOnce({ id: 'entry-1', upvotes: 1, downvotes: 0 })
+        .mockResolvedValueOnce({ upvotes: 1, downvotes: 0 })
       mockPrisma.whatsNewVote.findUnique.mockResolvedValue({
         id: 'vote-1',
         voteType: 'up',
       })
-      mockPrisma.whatsNewEntry.update.mockResolvedValue({ upvotes: 1, downvotes: 0 })
 
       const service = createWhatsNewService(mockPrisma as any, mockAuth as any)
-      await service.vote('entry-1', 'up')
+      const result = await service.vote('entry-1', 'up')
 
+      // When voting same as existing, no mutations should happen
       expect(mockPrisma.whatsNewVote.create).not.toHaveBeenCalled()
       expect(mockPrisma.whatsNewVote.update).not.toHaveBeenCalled()
       expect(mockPrisma.whatsNewVote.delete).not.toHaveBeenCalled()
-      expect(mockPrisma.whatsNewEntry.update).toHaveBeenCalledWith({
-        where: { id: 'entry-1' },
-        data: { upvotes: { increment: 0 }, downvotes: { increment: 0 } },
-      })
+      expect(mockPrisma.whatsNewEntry.update).not.toHaveBeenCalled()
+      // Should still return current counts
+      expect(result).toEqual({ upvotes: 1, downvotes: 0 })
     })
   })
 })

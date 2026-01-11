@@ -206,8 +206,9 @@ describe('useWhatsNew', () => {
         expect(result.current.entries).toHaveLength(1)
       })
 
+      // The new implementation re-throws the error after setting state
       await act(async () => {
-        await result.current.vote('entry-1', 'up')
+        await expect(result.current.vote('entry-1', 'up')).rejects.toThrow('Failed to vote')
       })
 
       expect(result.current.error).toBe('Failed to vote')
