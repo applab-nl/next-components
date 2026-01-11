@@ -19,9 +19,9 @@ Add packages via git dependencies:
 ```json
 {
   "dependencies": {
-    "@nextstack/core": "github:your-org/next-components#main",
-    "@nextstack/devtools": "github:your-org/next-components#main",
-    "@nextstack/feedback": "github:your-org/next-components#main"
+    "@nextstack/core": "github:applab-nl/next-components#main",
+    "@nextstack/devtools": "github:applab-nl/next-components#main",
+    "@nextstack/feedback": "github:applab-nl/next-components#main"
   }
 }
 ```
