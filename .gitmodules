@@ -1,0 +1,6 @@
+[submodule "apps/pulse"]
+	path = apps/pulse
+	url = https://github.com/applab-nl/pulse.git
+[submodule "apps/cvmeister"]
+	path = apps/cvmeister
+	url = https://github.com/applab-nl/cvmeister.git

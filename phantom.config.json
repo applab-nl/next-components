@@ -1,0 +1,10 @@
+{
+  "postCreate": {
+    "copyFiles": [
+      ".env"
+    ],
+    "commands": [
+      "zellij"
+    ]
+  }
+}

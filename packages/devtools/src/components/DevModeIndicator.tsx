@@ -8,7 +8,7 @@ import {
   Zap,
   GitBranch,
 } from 'lucide-react'
-import { useAuth } from '@nextstack/core'
+import { useAuthOptional } from '@nextstack/core'
 import { isLocalhost, getEnvironmentName } from '../utils/environment'
 
 export interface DevModeIndicatorProps {
@@ -56,7 +56,7 @@ export function DevModeIndicator({
   const [userEmail, setUserEmail] = useState<string | null>(null)
   const [isVisible, setIsVisible] = useState(false)
 
-  const auth = useAuth()
+  const auth = useAuthOptional()
 
   // Check visibility
   useEffect(() => {
@@ -79,7 +79,7 @@ export function DevModeIndicator({
 
   // Get current user
   useEffect(() => {
-    if (!isVisible || !showUser) return
+    if (!isVisible || !showUser || !auth) return
 
     auth
       .getCurrentUser()
