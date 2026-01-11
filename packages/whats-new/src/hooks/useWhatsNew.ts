@@ -3,12 +3,17 @@
 import { useState, useEffect, useCallback } from 'react'
 import type { WhatsNewEntry } from '../types'
 
+export interface VoteResult {
+  upvotes: number
+  downvotes: number
+}
+
 export interface UseWhatsNewReturn {
   entries: WhatsNewEntry[]
   isLoading: boolean
   error: string | null
   refetch: () => Promise<void>
-  vote: (entryId: string, voteType: 'up' | 'down' | null) => Promise<void>
+  vote: (entryId: string, voteType: 'up' | 'down' | null) => Promise<VoteResult>
 }
 
 export function useWhatsNew(apiEndpoint = '/api/whats-new'): UseWhatsNewReturn {
@@ -37,7 +42,7 @@ export function useWhatsNew(apiEndpoint = '/api/whats-new'): UseWhatsNewReturn {
   }, [fetchEntries])
 
   const vote = useCallback(
-    async (entryId: string, voteType: 'up' | 'down' | null) => {
+    async (entryId: string, voteType: 'up' | 'down' | null): Promise<VoteResult> => {
       try {
         const res = await fetch(`${apiEndpoint}/${entryId}/vote`, {
           method: 'POST',
@@ -60,8 +65,11 @@ export function useWhatsNew(apiEndpoint = '/api/whats-new'): UseWhatsNewReturn {
               : e
           )
         )
+
+        return { upvotes: data.upvotes, downvotes: data.downvotes }
       } catch (err) {
         setError(err instanceof Error ? err.message : 'Failed to vote')
+        throw err // Re-throw so caller can handle
       }
     },
     [apiEndpoint]

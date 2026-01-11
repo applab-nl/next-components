@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useCallback, useMemo } from 'react'
 import { createPortal } from 'react-dom'
 import {
   X,
@@ -9,6 +9,7 @@ import {
   ThumbsUp,
   ThumbsDown,
   ChevronDown,
+  Users,
 } from 'lucide-react'
 import { useWhatsNew } from '../hooks/useWhatsNew'
 import type { WhatsNewEntry } from '../types'
@@ -16,104 +17,260 @@ import type { WhatsNewEntry } from '../types'
 const LAST_VISIT_KEY = 'nextstack-whats-new-last-visit'
 
 export interface WhatsNewDialogProps {
+  /** Control dialog open state externally */
+  open?: boolean
+  /** Callback when open state changes */
+  onOpenChange?: (open: boolean) => void
   /** Enable voting on entries */
   enableVoting?: boolean
   /** Show linked feedback count */
   showLinkedFeedbackCount?: boolean
-  /** Trigger element (renders button if not provided) */
-  trigger?: React.ReactNode
   /** Additional CSS classes */
   className?: string
 }
 
+/**
+ * What's New dialog component
+ *
+ * Displays changelog entries with voting support and new entry highlighting.
+ * Tracks user's last visit to show new entries since then.
+ */
 export function WhatsNewDialog({
+  open: controlledOpen,
+  onOpenChange,
   enableVoting = true,
   showLinkedFeedbackCount = true,
-  trigger,
   className = '',
 }: WhatsNewDialogProps) {
-  const [isOpen, setIsOpen] = useState(false)
+  const [internalOpen, setInternalOpen] = useState(false)
   const [mounted, setMounted] = useState(false)
   const [showOlder, setShowOlder] = useState(false)
-  const { entries, isLoading, vote } = useWhatsNew()
+  const [lastVisit, setLastVisit] = useState<string | null>(null)
+  const [votingId, setVotingId] = useState<string | null>(null)
+  const [optimisticEntries, setOptimisticEntries] = useState<WhatsNewEntry[] | null>(null)
+  const { entries: serverEntries, isLoading, vote } = useWhatsNew()
+
+  // Use controlled or internal state
+  const isOpen = controlledOpen ?? internalOpen
+  const setIsOpen = useCallback(
+    (value: boolean) => {
+      if (onOpenChange) {
+        onOpenChange(value)
+      } else {
+        setInternalOpen(value)
+      }
+    },
+    [onOpenChange]
+  )
+
+  // Use optimistic entries if available, otherwise server entries
+  const entries = optimisticEntries ?? serverEntries
 
   useEffect(() => {
     setMounted(true)
   }, [])
 
-  // Get last visit date
-  const lastVisit =
-    typeof window !== 'undefined'
-      ? localStorage.getItem(LAST_VISIT_KEY)
-      : null
-  const lastVisitDate = lastVisit ? new Date(lastVisit) : null
-
-  // Separate new and older entries
-  const newEntries = lastVisitDate
-    ? entries.filter((e) => new Date(e.date) > lastVisitDate)
-    : entries
-  const olderEntries = lastVisitDate
-    ? entries.filter((e) => new Date(e.date) <= lastVisitDate)
-    : []
-
-  // Update last visit when opening
+  // Load last visit on mount
   useEffect(() => {
-    if (isOpen && typeof window !== 'undefined') {
-      localStorage.setItem(LAST_VISIT_KEY, new Date().toISOString())
+    if (typeof window !== 'undefined') {
+      const stored = localStorage.getItem(LAST_VISIT_KEY)
+      setLastVisit(stored)
+    }
+  }, [])
+
+  // Reset showOlder when dialog opens
+  useEffect(() => {
+    if (isOpen) {
+      setShowOlder(false)
+      setOptimisticEntries(null) // Clear optimistic state on open
     }
   }, [isOpen])
 
+  // Handle dialog close - update last visit
+  const handleOpenChange = useCallback(
+    (newOpen: boolean) => {
+      if (!newOpen && isOpen) {
+        // Dialog is closing - update last visit timestamp
+        const now = new Date().toISOString().split('T')[0] ?? ''
+        if (typeof window !== 'undefined' && now) {
+          localStorage.setItem(LAST_VISIT_KEY, now)
+          setLastVisit(now)
+        }
+      }
+      setIsOpen(newOpen)
+    },
+    [isOpen, setIsOpen]
+  )
+
+  // Check if entry is new since last visit
+  const isNewEntry = useCallback(
+    (entryDate: Date | string): boolean => {
+      if (!lastVisit) return true // All entries are new for first-time visitors
+      const dateStr =
+        entryDate instanceof Date
+          ? (entryDate.toISOString().split('T')[0] ?? '')
+          : (String(entryDate).split('T')[0] ?? '')
+      return dateStr > lastVisit
+    },
+    [lastVisit]
+  )
+
+  // Separate new and older entries
+  const { newEntries, olderEntries } = useMemo(() => {
+    const newOnes: WhatsNewEntry[] = []
+    const oldOnes: WhatsNewEntry[] = []
+
+    entries.forEach((entry) => {
+      if (isNewEntry(entry.date)) {
+        newOnes.push(entry)
+      } else {
+        oldOnes.push(entry)
+      }
+    })
+
+    return { newEntries: newOnes, olderEntries: oldOnes }
+  }, [entries, isNewEntry])
+
+  // Format date for display
+  const formatDate = (date: Date | string): string => {
+    const d = date instanceof Date ? date : new Date(date)
+    return d.toLocaleDateString('en-US', {
+      month: 'long',
+      day: 'numeric',
+      year: 'numeric',
+    })
+  }
+
+  // Handle voting with optimistic update
   const handleVote = async (entryId: string, voteType: 'up' | 'down') => {
     const entry = entries.find((e) => e.id === entryId)
-    const newVote = entry?.currentUserVote === voteType ? null : voteType
-    await vote(entryId, newVote)
+    if (!entry) return
+
+    // Determine new vote
+    const newVote = entry.currentUserVote === voteType ? null : voteType
+
+    setVotingId(entryId)
+
+    // Optimistic update
+    setOptimisticEntries((prev) => {
+      const base = prev ?? serverEntries
+      return base.map((e) => {
+        if (e.id !== entryId) return e
+
+        let upvotes = e.upvotes
+        let downvotes = e.downvotes
+
+        // Reverse previous vote
+        if (e.currentUserVote === 'up') upvotes--
+        if (e.currentUserVote === 'down') downvotes--
+
+        // Apply new vote
+        if (newVote === 'up') upvotes++
+        if (newVote === 'down') downvotes++
+
+        return { ...e, currentUserVote: newVote, upvotes, downvotes }
+      })
+    })
+
+    try {
+      const result = await vote(entryId, newVote)
+      // Update with server response
+      setOptimisticEntries((prev) => {
+        const base = prev ?? serverEntries
+        return base.map((e) =>
+          e.id === entryId
+            ? { ...e, upvotes: result.upvotes, downvotes: result.downvotes, currentUserVote: newVote }
+            : e
+        )
+      })
+    } catch {
+      // Revert on error
+      setOptimisticEntries((prev) => {
+        const base = prev ?? serverEntries
+        return base.map((e) => (e.id === entryId ? entry : e))
+      })
+    } finally {
+      setVotingId(null)
+    }
   }
 
   if (!mounted) return null
 
-  const triggerElement = trigger ?? (
-    <button
-      onClick={() => setIsOpen(true)}
-      className={`flex items-center gap-2 rounded-lg px-3 py-2 text-sm font-medium text-gray-700 hover:bg-gray-100 dark:text-gray-300 dark:hover:bg-gray-800 ${className}`}
-    >
-      <Sparkles className="h-4 w-4" />
-      What's New
-      {newEntries.length > 0 && (
-        <span className="flex h-5 w-5 items-center justify-center rounded-full bg-blue-600 text-xs text-white">
-          {newEntries.length}
-        </span>
-      )}
-    </button>
-  )
-
   const dialogContent = isOpen && (
     <div
-      className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4"
-      onClick={(e) => e.target === e.currentTarget && setIsOpen(false)}
+      className="fixed inset-0 z-50 flex items-center justify-center p-4"
+      onClick={(e) => e.target === e.currentTarget && handleOpenChange(false)}
     >
-      <div className="max-h-[80vh] w-full max-w-lg overflow-hidden rounded-xl bg-white shadow-2xl dark:bg-gray-800">
+      {/* Backdrop */}
+      <div className="fixed inset-0 bg-black/50 backdrop-blur-sm animate-in fade-in-0" />
+
+      {/* Dialog */}
+      <div
+        className={`relative w-full max-w-2xl max-h-[85vh] bg-white dark:bg-gray-800 rounded-lg shadow-2xl flex flex-col animate-in fade-in-0 zoom-in-95 ${className}`}
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby="whats-new-title"
+      >
         {/* Header */}
-        <div className="flex items-center justify-between border-b border-gray-200 p-4 dark:border-gray-700">
+        <div className="flex items-center justify-between px-4 py-3 border-b border-gray-200 dark:border-gray-700 flex-shrink-0">
           <div className="flex items-center gap-2">
-            <Sparkles className="h-5 w-5 text-blue-600" />
-            <h2 className="text-lg font-semibold text-gray-900 dark:text-white">
+            <Sparkles className="h-5 w-5 text-amber-500" />
+            <h2
+              id="whats-new-title"
+              className="text-base font-semibold text-gray-900 dark:text-gray-100"
+            >
               What's New
             </h2>
+            {!isLoading && newEntries.length > 0 && !showOlder && (
+              <span className="text-xs text-gray-500 dark:text-gray-400">
+                ({newEntries.length} new update{newEntries.length !== 1 ? 's' : ''})
+              </span>
+            )}
+            {!isLoading && (showOlder || newEntries.length === 0) && (
+              <span className="text-xs text-gray-500 dark:text-gray-400">
+                ({entries.length} update{entries.length !== 1 ? 's' : ''})
+              </span>
+            )}
           </div>
           <button
-            onClick={() => setIsOpen(false)}
-            className="rounded-full p-1 text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-700"
+            type="button"
+            onClick={() => handleOpenChange(false)}
+            className="rounded-md p-1 text-gray-400 hover:text-gray-500 dark:hover:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-500"
+            aria-label="Close"
           >
             <X className="h-5 w-5" />
           </button>
         </div>
 
         {/* Content */}
-        <div className="max-h-[60vh] overflow-y-auto p-4">
+        <div className="flex-1 overflow-y-auto px-4 py-3">
           {isLoading ? (
-            <div className="py-8 text-center text-gray-500">Loading...</div>
+            <div className="flex items-center justify-center py-8">
+              <svg
+                className="animate-spin h-6 w-6 text-gray-400"
+                xmlns="http://www.w3.org/2000/svg"
+                fill="none"
+                viewBox="0 0 24 24"
+              >
+                <circle
+                  className="opacity-25"
+                  cx="12"
+                  cy="12"
+                  r="10"
+                  stroke="currentColor"
+                  strokeWidth="4"
+                />
+                <path
+                  className="opacity-75"
+                  fill="currentColor"
+                  d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
+                />
+              </svg>
+            </div>
           ) : entries.length === 0 ? (
-            <div className="py-8 text-center text-gray-500">No updates yet</div>
+            <p className="text-sm text-gray-500 dark:text-gray-400 text-center py-8">
+              No updates available yet.
+            </p>
           ) : (
             <div className="space-y-4">
               {/* New entries */}
@@ -125,55 +282,67 @@ export function WhatsNewDialog({
                   enableVoting={enableVoting}
                   showLinkedFeedbackCount={showLinkedFeedbackCount}
                   onVote={handleVote}
+                  isVoting={votingId === entry.id}
+                  formatDate={formatDate}
                 />
               ))}
 
               {/* Show older toggle */}
-              {olderEntries.length > 0 && (
+              {newEntries.length > 0 && olderEntries.length > 0 && !showOlder && (
                 <button
-                  onClick={() => setShowOlder(!showOlder)}
-                  className="flex w-full items-center justify-center gap-1 py-2 text-sm text-gray-500 hover:text-gray-700 dark:hover:text-gray-300"
+                  type="button"
+                  onClick={() => setShowOlder(true)}
+                  className="w-full flex items-center justify-center gap-1 py-2 text-sm font-medium text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-200 transition-colors"
                 >
-                  {showOlder ? 'Hide' : 'Show'} {olderEntries.length} older{' '}
-                  {olderEntries.length === 1 ? 'update' : 'updates'}
-                  <ChevronDown
-                    className={`h-4 w-4 transition-transform ${showOlder ? 'rotate-180' : ''}`}
-                  />
+                  <ChevronDown className="h-4 w-4" />
+                  Show {olderEntries.length} older update
+                  {olderEntries.length !== 1 ? 's' : ''}
                 </button>
               )}
 
-              {/* Older entries */}
-              {showOlder &&
+              {/* Older entries (when no new entries or showOlder is true) */}
+              {(newEntries.length === 0 || showOlder) &&
                 olderEntries.map((entry) => (
                   <EntryCard
                     key={entry.id}
                     entry={entry}
+                    isNew={false}
                     enableVoting={enableVoting}
                     showLinkedFeedbackCount={showLinkedFeedbackCount}
                     onVote={handleVote}
+                    isVoting={votingId === entry.id}
+                    formatDate={formatDate}
                   />
                 ))}
             </div>
           )}
         </div>
+
+        {/* Footer */}
+        <div className="flex items-center justify-end px-4 py-3 border-t border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-800/50 rounded-b-lg flex-shrink-0">
+          <button
+            type="button"
+            onClick={() => handleOpenChange(false)}
+            className="px-3 py-1.5 text-sm font-medium text-gray-700 dark:text-gray-300 bg-white dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-md hover:bg-gray-50 dark:hover:bg-gray-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition-colors"
+          >
+            Close
+          </button>
+        </div>
       </div>
     </div>
   )
 
-  return (
-    <>
-      <div onClick={() => setIsOpen(true)}>{triggerElement}</div>
-      {createPortal(dialogContent, document.body)}
-    </>
-  )
+  return createPortal(dialogContent, document.body)
 }
 
 interface EntryCardProps {
   entry: WhatsNewEntry
-  isNew?: boolean
+  isNew: boolean
   enableVoting: boolean
   showLinkedFeedbackCount: boolean
   onVote: (entryId: string, voteType: 'up' | 'down') => void
+  isVoting: boolean
+  formatDate: (date: Date | string) => string
 }
 
 function EntryCard({
@@ -182,69 +351,136 @@ function EntryCard({
   enableVoting,
   showLinkedFeedbackCount,
   onVote,
+  isVoting,
+  formatDate,
 }: EntryCardProps) {
   return (
     <div
-      className={`rounded-lg border p-4 ${
+      className={`rounded-lg p-3 transition-colors ${
         isNew
-          ? 'border-blue-200 bg-blue-50 dark:border-blue-800 dark:bg-blue-900/20'
-          : 'border-gray-200 dark:border-gray-700'
+          ? 'bg-amber-50 dark:bg-amber-900/20 border border-amber-200 dark:border-amber-800'
+          : 'bg-gray-50 dark:bg-gray-700/50 border border-gray-200 dark:border-gray-700'
       }`}
     >
-      {/* Date and badge */}
-      <div className="mb-2 flex items-center gap-2">
-        <Calendar className="h-3.5 w-3.5 text-gray-400" />
-        <span className="text-xs text-gray-500">
-          {new Date(entry.date).toLocaleDateString()}
-        </span>
+      {/* Title and NEW badge */}
+      <div className="flex items-start justify-between gap-2 mb-1">
+        <h3
+          className={`text-sm font-semibold ${
+            isNew
+              ? 'text-amber-900 dark:text-amber-100'
+              : 'text-gray-900 dark:text-gray-100'
+          }`}
+        >
+          {entry.title}
+        </h3>
         {isNew && (
-          <span className="rounded-full bg-blue-600 px-2 py-0.5 text-xs font-medium text-white">
-            New
+          <span className="inline-flex items-center px-1.5 py-0.5 rounded text-xs font-medium bg-amber-500 text-white flex-shrink-0">
+            NEW
           </span>
         )}
       </div>
 
-      {/* Title and summary */}
-      <h3 className="mb-1 font-semibold text-gray-900 dark:text-white">
-        {entry.title}
-      </h3>
-      <p className="text-sm text-gray-600 dark:text-gray-400">{entry.summary}</p>
-
-      {/* Footer: voting and feedback count */}
-      <div className="mt-3 flex items-center justify-between">
-        {enableVoting && (
-          <div className="flex items-center gap-2">
-            <button
-              onClick={() => onVote(entry.id, 'up')}
-              className={`flex items-center gap-1 rounded px-2 py-1 text-sm ${
-                entry.currentUserVote === 'up'
-                  ? 'bg-green-100 text-green-700 dark:bg-green-900 dark:text-green-300'
-                  : 'text-gray-500 hover:bg-gray-100 dark:hover:bg-gray-700'
-              }`}
-            >
-              <ThumbsUp className="h-3.5 w-3.5" />
-              {entry.upvotes}
-            </button>
-            <button
-              onClick={() => onVote(entry.id, 'down')}
-              className={`flex items-center gap-1 rounded px-2 py-1 text-sm ${
-                entry.currentUserVote === 'down'
-                  ? 'bg-red-100 text-red-700 dark:bg-red-900 dark:text-red-300'
-                  : 'text-gray-500 hover:bg-gray-100 dark:hover:bg-gray-700'
-              }`}
-            >
-              <ThumbsDown className="h-3.5 w-3.5" />
-              {entry.downvotes}
-            </button>
-          </div>
-        )}
-
-        {showLinkedFeedbackCount && entry.linkedFeedbackCount !== undefined && (
-          <span className="text-xs text-gray-400">
-            {entry.linkedFeedbackCount} linked feedback
+      {/* Date and linked feedback count */}
+      <div className="flex items-center gap-3 mb-2">
+        <div className="flex items-center gap-1">
+          <Calendar
+            className={`h-3 w-3 ${
+              isNew
+                ? 'text-amber-600 dark:text-amber-400'
+                : 'text-gray-400 dark:text-gray-500'
+            }`}
+          />
+          <span
+            className={`text-xs ${
+              isNew
+                ? 'text-amber-600 dark:text-amber-400'
+                : 'text-gray-500 dark:text-gray-400'
+            }`}
+          >
+            {formatDate(entry.date)}
           </span>
-        )}
+        </div>
+        {showLinkedFeedbackCount &&
+          entry.linkedFeedbackCount !== undefined &&
+          entry.linkedFeedbackCount > 0 && (
+            <div className="flex items-center gap-1">
+              <Users
+                className={`h-3 w-3 ${
+                  isNew
+                    ? 'text-amber-600 dark:text-amber-400'
+                    : 'text-gray-400 dark:text-gray-500'
+                }`}
+              />
+              <span
+                className={`text-xs ${
+                  isNew
+                    ? 'text-amber-600 dark:text-amber-400'
+                    : 'text-gray-500 dark:text-gray-400'
+                }`}
+              >
+                Based on {entry.linkedFeedbackCount} user request
+                {entry.linkedFeedbackCount !== 1 ? 's' : ''}
+              </span>
+            </div>
+          )}
       </div>
+
+      {/* Summary */}
+      <p
+        className={`text-sm mb-3 ${
+          isNew
+            ? 'text-amber-800 dark:text-amber-200'
+            : 'text-gray-600 dark:text-gray-300'
+        }`}
+      >
+        {entry.summary}
+      </p>
+
+      {/* Vote buttons */}
+      {enableVoting && (
+        <div className="flex items-center gap-2">
+          <button
+            type="button"
+            onClick={() => onVote(entry.id, 'up')}
+            disabled={isVoting}
+            className={`inline-flex items-center gap-1 px-2 py-1 rounded-md text-xs font-medium transition-colors ${
+              entry.currentUserVote === 'up'
+                ? 'bg-green-100 dark:bg-green-900/40 text-green-700 dark:text-green-300 border border-green-300 dark:border-green-700'
+                : isNew
+                  ? 'bg-amber-100/50 dark:bg-amber-800/30 text-amber-700 dark:text-amber-300 border border-amber-200 dark:border-amber-700 hover:bg-amber-100 dark:hover:bg-amber-800/50'
+                  : 'bg-gray-100 dark:bg-gray-600/50 text-gray-600 dark:text-gray-300 border border-gray-200 dark:border-gray-600 hover:bg-gray-200 dark:hover:bg-gray-600'
+            } disabled:opacity-50`}
+            aria-label="Upvote"
+          >
+            <ThumbsUp
+              className={`h-3.5 w-3.5 ${
+                entry.currentUserVote === 'up' ? 'fill-current' : ''
+              }`}
+            />
+            <span>{entry.upvotes}</span>
+          </button>
+          <button
+            type="button"
+            onClick={() => onVote(entry.id, 'down')}
+            disabled={isVoting}
+            className={`inline-flex items-center gap-1 px-2 py-1 rounded-md text-xs font-medium transition-colors ${
+              entry.currentUserVote === 'down'
+                ? 'bg-red-100 dark:bg-red-900/40 text-red-700 dark:text-red-300 border border-red-300 dark:border-red-700'
+                : isNew
+                  ? 'bg-amber-100/50 dark:bg-amber-800/30 text-amber-700 dark:text-amber-300 border border-amber-200 dark:border-amber-700 hover:bg-amber-100 dark:hover:bg-amber-800/50'
+                  : 'bg-gray-100 dark:bg-gray-600/50 text-gray-600 dark:text-gray-300 border border-gray-200 dark:border-gray-600 hover:bg-gray-200 dark:hover:bg-gray-600'
+            } disabled:opacity-50`}
+            aria-label="Downvote"
+          >
+            <ThumbsDown
+              className={`h-3.5 w-3.5 ${
+                entry.currentUserVote === 'down' ? 'fill-current' : ''
+              }`}
+            />
+            <span>{entry.downvotes}</span>
+          </button>
+        </div>
+      )}
     </div>
   )
 }
