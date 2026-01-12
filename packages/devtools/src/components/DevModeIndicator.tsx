@@ -24,6 +24,8 @@ export interface DevModeIndicatorProps {
   devInfoEndpoint?: string
   /** Database identifier to display */
   databaseId?: string
+  /** Database port to display */
+  databasePort?: number | string
   /** Additional CSS classes */
   className?: string
   /** Only show on localhost (default: true) */
@@ -33,6 +35,7 @@ export interface DevModeIndicatorProps {
 interface DevInfo {
   branch?: string
   database?: string
+  databasePort?: number | string
 }
 
 /**
@@ -48,6 +51,7 @@ export function DevModeIndicator({
   showUser = true,
   devInfoEndpoint = '/api/dev/info',
   databaseId,
+  databasePort,
   className = '',
   localhostOnly = true,
 }: DevModeIndicatorProps) {
@@ -148,6 +152,11 @@ export function DevModeIndicator({
                 <Database className="h-4 w-4 text-gray-500" aria-hidden="true" />
                 <span className="truncate">
                   {databaseId ?? devInfo.database ?? 'Local'}
+                  {(databasePort ?? devInfo.databasePort) && (
+                    <span className="ml-1 text-gray-500">
+                      :{databasePort ?? devInfo.databasePort}
+                    </span>
+                  )}
                 </span>
               </div>
             )}
