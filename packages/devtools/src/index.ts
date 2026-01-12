@@ -2,6 +2,10 @@
 
 // Components
 export { DevModeIndicator } from './components/DevModeIndicator'
+export type {
+  DevModeIndicatorProps,
+  DevModeIndicatorTranslations,
+} from './components/DevModeIndicator'
 export { DevLoginPage } from './components/DevLoginPage'
 
 // Configuration

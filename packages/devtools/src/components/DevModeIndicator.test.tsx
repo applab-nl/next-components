@@ -72,10 +72,23 @@ describe('DevModeIndicator', () => {
   })
 
   describe('collapsed state', () => {
-    it('should show collapsed indicator button initially', () => {
+    it('should show DEV badge with expand button initially', () => {
       render(<DevModeIndicator />)
 
+      expect(screen.getByText('DEV')).toBeInTheDocument()
       expect(screen.getByLabelText('Expand dev info')).toBeInTheDocument()
+    })
+
+    it('should show branch in header when available', async () => {
+      mockFetch.mockResolvedValue({
+        json: () => Promise.resolve({ branch: 'feature/test' }),
+      })
+
+      render(<DevModeIndicator />)
+
+      await waitFor(() => {
+        expect(screen.getByText(/⎇ feature\/test/)).toBeInTheDocument()
+      })
     })
 
     it('should expand when clicked', async () => {
@@ -84,30 +97,31 @@ describe('DevModeIndicator', () => {
       fireEvent.click(screen.getByLabelText('Expand dev info'))
 
       await waitFor(() => {
-        expect(screen.getByText('Dev Mode')).toBeInTheDocument()
+        expect(screen.getByText('Auth')).toBeInTheDocument()
       })
     })
   })
 
   describe('expanded state', () => {
-    it('should show git branch from API', async () => {
+    it('should show all sections when expanded', async () => {
       mockFetch.mockResolvedValue({
-        json: () =>
-          Promise.resolve({ branch: 'feature/test', database: 'test-db' }),
+        json: () => Promise.resolve({ branch: 'main', database: 'test-db' }),
       })
 
       render(<DevModeIndicator />)
       fireEvent.click(screen.getByLabelText('Expand dev info'))
 
       await waitFor(() => {
-        expect(screen.getByText('feature/test')).toBeInTheDocument()
+        expect(screen.getByText('Auth')).toBeInTheDocument()
+        expect(screen.getByText('Database')).toBeInTheDocument()
+        expect(screen.getByText('Environment')).toBeInTheDocument()
+        expect(screen.getByText('Branch')).toBeInTheDocument()
       })
     })
 
     it('should show database name from API', async () => {
       mockFetch.mockResolvedValue({
-        json: () =>
-          Promise.resolve({ branch: 'main', database: 'my-database' }),
+        json: () => Promise.resolve({ branch: 'main', database: 'my-database' }),
       })
 
       render(<DevModeIndicator />)
@@ -194,7 +208,9 @@ describe('DevModeIndicator', () => {
 
     it('should show user email when authenticated', async () => {
       const mockAuth = {
-        getCurrentUser: vi.fn().mockResolvedValue({ email: 'test@example.com' }),
+        getCurrentUser: vi
+          .fn()
+          .mockResolvedValue({ email: 'test@example.com', id: '12345678-abcd' }),
       }
       vi.mocked(useAuthOptional).mockReturnValue(mockAuth as any)
 
@@ -206,18 +222,34 @@ describe('DevModeIndicator', () => {
       })
     })
 
-    it('should show "Not logged in" when no user', async () => {
+    it('should show "Not authenticated" when no user', async () => {
       vi.mocked(useAuthOptional).mockReturnValue(null)
 
       render(<DevModeIndicator />)
       fireEvent.click(screen.getByLabelText('Expand dev info'))
 
       await waitFor(() => {
-        expect(screen.getByText('Not logged in')).toBeInTheDocument()
+        expect(screen.getByText('Not authenticated')).toBeInTheDocument()
       })
     })
 
-    it('should show environment badge', async () => {
+    it('should show user ID when authenticated', async () => {
+      const mockAuth = {
+        getCurrentUser: vi
+          .fn()
+          .mockResolvedValue({ email: 'test@example.com', id: '12345678-abcd-efgh' }),
+      }
+      vi.mocked(useAuthOptional).mockReturnValue(mockAuth as any)
+
+      render(<DevModeIndicator />)
+      fireEvent.click(screen.getByLabelText('Expand dev info'))
+
+      await waitFor(() => {
+        expect(screen.getByText('ID: 12345678...')).toBeInTheDocument()
+      })
+    })
+
+    it('should show environment', async () => {
       vi.mocked(environmentModule.getEnvironmentName).mockReturnValue(
         'development'
       )
@@ -235,12 +267,12 @@ describe('DevModeIndicator', () => {
       fireEvent.click(screen.getByLabelText('Expand dev info'))
 
       await waitFor(() => {
-        expect(screen.getByText('Dev Mode')).toBeInTheDocument()
+        expect(screen.getByText('Auth')).toBeInTheDocument()
       })
 
       fireEvent.click(screen.getByLabelText('Collapse dev info'))
 
-      expect(screen.queryByText('Dev Mode')).not.toBeInTheDocument()
+      expect(screen.queryByText('Auth')).not.toBeInTheDocument()
       expect(screen.getByLabelText('Expand dev info')).toBeInTheDocument()
     })
   })
@@ -285,10 +317,13 @@ describe('DevModeIndicator', () => {
       fireEvent.click(screen.getByLabelText('Expand dev info'))
 
       await waitFor(() => {
-        expect(screen.getByText('Dev Mode')).toBeInTheDocument()
+        expect(screen.getByText('Auth')).toBeInTheDocument()
       })
 
-      expect(screen.queryByText('main')).not.toBeInTheDocument()
+      // Branch label should not be visible
+      expect(screen.queryByText('Branch')).not.toBeInTheDocument()
+      // Branch in header should not be visible either
+      expect(screen.queryByText(/⎇/)).not.toBeInTheDocument()
     })
 
     it('should not show database when showDatabase=false', async () => {
@@ -296,10 +331,10 @@ describe('DevModeIndicator', () => {
       fireEvent.click(screen.getByLabelText('Expand dev info'))
 
       await waitFor(() => {
-        expect(screen.getByText('Dev Mode')).toBeInTheDocument()
+        expect(screen.getByText('Auth')).toBeInTheDocument()
       })
 
-      expect(screen.queryByText('Local')).not.toBeInTheDocument()
+      expect(screen.queryByText('Database')).not.toBeInTheDocument()
     })
 
     it('should not show user when showUser=false', async () => {
@@ -307,10 +342,10 @@ describe('DevModeIndicator', () => {
       fireEvent.click(screen.getByLabelText('Expand dev info'))
 
       await waitFor(() => {
-        expect(screen.getByText('Dev Mode')).toBeInTheDocument()
+        expect(screen.getByText('Environment')).toBeInTheDocument()
       })
 
-      expect(screen.queryByText('Not logged in')).not.toBeInTheDocument()
+      expect(screen.queryByText('Auth')).not.toBeInTheDocument()
     })
   })
 
@@ -334,6 +369,53 @@ describe('DevModeIndicator', () => {
     })
   })
 
+  describe('translations', () => {
+    it('should use custom translations object', async () => {
+      render(
+        <DevModeIndicator
+          translations={{
+            badge: 'ONTWIKKELING',
+            auth: 'Authenticatie',
+            notAuthenticated: 'Niet ingelogd',
+          }}
+        />
+      )
+
+      expect(screen.getByText('ONTWIKKELING')).toBeInTheDocument()
+
+      fireEvent.click(screen.getByLabelText('Expand dev info'))
+
+      await waitFor(() => {
+        expect(screen.getByText('Authenticatie')).toBeInTheDocument()
+        expect(screen.getByText('Niet ingelogd')).toBeInTheDocument()
+      })
+    })
+
+    it('should use translation function when provided', async () => {
+      const mockT = vi.fn((key: string) => {
+        const translations: Record<string, string> = {
+          badge: 'DEV-FR',
+          auth: 'Authentification',
+          notAuthenticated: 'Non connecté',
+          database: 'Base de données',
+          environment: 'Environnement',
+        }
+        return translations[key] || key
+      })
+
+      render(<DevModeIndicator t={mockT} />)
+
+      expect(screen.getByText('DEV-FR')).toBeInTheDocument()
+
+      fireEvent.click(screen.getByLabelText('Expand dev info'))
+
+      await waitFor(() => {
+        expect(screen.getByText('Authentification')).toBeInTheDocument()
+        expect(screen.getByText('Base de données')).toBeInTheDocument()
+      })
+    })
+  })
+
   describe('displayName', () => {
     it('should have displayName set', () => {
       expect(DevModeIndicator.displayName).toBe('DevModeIndicator')
@@ -348,7 +430,7 @@ describe('DevModeIndicator', () => {
       fireEvent.click(screen.getByLabelText('Expand dev info'))
 
       await waitFor(() => {
-        expect(screen.getByText('unknown')).toBeInTheDocument()
+        expect(screen.getByText(/⎇ unknown/)).toBeInTheDocument()
       })
     })
 
@@ -362,49 +444,7 @@ describe('DevModeIndicator', () => {
       fireEvent.click(screen.getByLabelText('Expand dev info'))
 
       await waitFor(() => {
-        expect(screen.getByText('Not logged in')).toBeInTheDocument()
-      })
-    })
-  })
-
-  describe('environment badges', () => {
-    it('should show green badge for development', async () => {
-      vi.mocked(environmentModule.getEnvironmentName).mockReturnValue(
-        'development'
-      )
-
-      render(<DevModeIndicator />)
-      fireEvent.click(screen.getByLabelText('Expand dev info'))
-
-      await waitFor(() => {
-        const badge = screen.getByText('development')
-        expect(badge).toHaveClass('bg-green-900', 'text-green-200')
-      })
-    })
-
-    it('should show yellow badge for staging', async () => {
-      vi.mocked(environmentModule.getEnvironmentName).mockReturnValue('staging')
-
-      render(<DevModeIndicator />)
-      fireEvent.click(screen.getByLabelText('Expand dev info'))
-
-      await waitFor(() => {
-        const badge = screen.getByText('staging')
-        expect(badge).toHaveClass('bg-yellow-900', 'text-yellow-200')
-      })
-    })
-
-    it('should show red badge for production', async () => {
-      vi.mocked(environmentModule.getEnvironmentName).mockReturnValue(
-        'production'
-      )
-
-      render(<DevModeIndicator />)
-      fireEvent.click(screen.getByLabelText('Expand dev info'))
-
-      await waitFor(() => {
-        const badge = screen.getByText('production')
-        expect(badge).toHaveClass('bg-red-900', 'text-red-200')
+        expect(screen.getByText('Not authenticated')).toBeInTheDocument()
       })
     })
   })

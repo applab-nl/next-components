@@ -1,15 +1,29 @@
 'use client'
 
 import { useState, useEffect } from 'react'
-import {
-  ChevronDown,
-  User,
-  Database,
-  Zap,
-  GitBranch,
-} from 'lucide-react'
+import { ChevronUp, ChevronDown, User, Database, Zap, GitBranch } from 'lucide-react'
 import { useAuthOptional } from '@nextstack/core'
 import { isLocalhost, getEnvironmentName } from '../utils/environment'
+
+export interface DevModeIndicatorTranslations {
+  badge?: string
+  auth?: string
+  notAuthenticated?: string
+  database?: string
+  environment?: string
+  branch?: string
+  userId?: string
+}
+
+const defaultTranslations: Required<DevModeIndicatorTranslations> = {
+  badge: 'DEV',
+  auth: 'Auth',
+  notAuthenticated: 'Not authenticated',
+  database: 'Database',
+  environment: 'Environment',
+  branch: 'Branch',
+  userId: 'ID: {id}',
+}
 
 export interface DevModeIndicatorProps {
   /** Position on screen */
@@ -26,10 +40,18 @@ export interface DevModeIndicatorProps {
   databaseId?: string
   /** Database port to display */
   databasePort?: number | string
+  /** User email to display (overrides auth context) */
+  userEmail?: string | null
+  /** User ID to display (overrides auth context) */
+  userId?: string | null
   /** Additional CSS classes */
   className?: string
   /** Only show on localhost (default: true) */
   localhostOnly?: boolean
+  /** Custom translations (for apps without next-intl) */
+  translations?: DevModeIndicatorTranslations
+  /** Translation function from next-intl useTranslations('devMode') */
+  t?: (key: string, values?: Record<string, string>) => string
 }
 
 interface DevInfo {
@@ -52,15 +74,41 @@ export function DevModeIndicator({
   devInfoEndpoint = '/api/dev/info',
   databaseId,
   databasePort,
+  userEmail: userEmailProp,
+  userId: userIdProp,
   className = '',
   localhostOnly = true,
+  translations,
+  t: translateFn,
 }: DevModeIndicatorProps) {
   const [isExpanded, setIsExpanded] = useState(false)
   const [devInfo, setDevInfo] = useState<DevInfo>({})
-  const [userEmail, setUserEmail] = useState<string | null>(null)
+  const [authUserEmail, setAuthUserEmail] = useState<string | null>(null)
+  const [authUserId, setAuthUserId] = useState<string | null>(null)
   const [isVisible, setIsVisible] = useState(false)
 
   const auth = useAuthOptional()
+
+  // Use props if provided, otherwise use auth context
+  const userEmail = userEmailProp !== undefined ? userEmailProp : authUserEmail
+  const userId = userIdProp !== undefined ? userIdProp : authUserId
+
+  // Merge translations with defaults
+  const labels = { ...defaultTranslations, ...translations }
+
+  // Translation helper - uses provided t function or falls back to labels
+  const translate = (key: keyof typeof defaultTranslations, values?: Record<string, string>) => {
+    if (translateFn) {
+      return translateFn(key, values)
+    }
+    let text = labels[key]
+    if (values) {
+      Object.entries(values).forEach(([k, v]) => {
+        text = text.replace(`{${k}}`, v)
+      })
+    }
+    return text
+  }
 
   // Check visibility
   useEffect(() => {
@@ -81,19 +129,30 @@ export function DevModeIndicator({
       .catch(() => setDevInfo({ branch: 'unknown' }))
   }, [isVisible, showGitBranch, devInfoEndpoint])
 
-  // Get current user
+  // Get current user from auth context (only if props not provided)
   useEffect(() => {
     if (!isVisible || !showUser || !auth) return
+    if (userEmailProp !== undefined) return // Skip if prop provided
 
     auth
       .getCurrentUser()
-      .then((user) => setUserEmail(user?.email ?? null))
-      .catch(() => setUserEmail(null))
-  }, [isVisible, showUser, auth])
+      .then((user) => {
+        setAuthUserEmail(user?.email ?? null)
+        setAuthUserId(user?.id ?? null)
+      })
+      .catch(() => {
+        setAuthUserEmail(null)
+        setAuthUserId(null)
+      })
+  }, [isVisible, showUser, auth, userEmailProp])
 
   if (!isVisible) return null
 
   const environment = getEnvironmentName()
+  const branch = devInfo.branch
+  const dbName = databaseId ?? devInfo.database ?? 'Local'
+  const dbPort = databasePort ?? devInfo.databasePort
+
   const positionClasses = {
     'bottom-right': 'bottom-4 right-4',
     'bottom-left': 'bottom-4 left-4',
@@ -107,87 +166,94 @@ export function DevModeIndicator({
       role="status"
       aria-label="Development mode indicator"
     >
-      {/* Collapsed state - just the indicator dot */}
-      {!isExpanded && (
+      <div
+        className={`bg-gray-900 text-white rounded-lg shadow-lg transition-all duration-200 ${
+          isExpanded ? 'w-72' : 'w-auto'
+        }`}
+      >
+        {/* Header - always visible */}
         <button
-          onClick={() => setIsExpanded(true)}
-          className="flex h-8 w-8 items-center justify-center rounded-full bg-yellow-500 shadow-lg transition-transform hover:scale-110"
-          aria-label="Expand dev info"
+          onClick={() => setIsExpanded(!isExpanded)}
+          className="flex items-center gap-2 px-3 py-2 w-full text-left"
+          aria-label={isExpanded ? 'Collapse dev info' : 'Expand dev info'}
         >
-          <span className="h-3 w-3 animate-pulse rounded-full bg-yellow-200" />
+          <div className="w-2 h-2 rounded-full bg-yellow-400 animate-pulse" />
+          <span className="text-xs font-medium">
+            {translate('badge')}
+            {showGitBranch && branch && (
+              <span className="text-orange-400 ml-1">(⎇ {branch})</span>
+            )}
+          </span>
+          {isExpanded ? (
+            <ChevronDown className="h-3 w-3 ml-auto" />
+          ) : (
+            <ChevronUp className="h-3 w-3 ml-auto" />
+          )}
         </button>
-      )}
 
-      {/* Expanded state - full panel */}
-      {isExpanded && (
-        <div className="w-64 rounded-lg bg-gray-900 p-3 text-sm text-white shadow-xl">
-          {/* Header */}
-          <div className="mb-2 flex items-center justify-between">
-            <div className="flex items-center gap-2">
-              <Zap className="h-4 w-4 text-yellow-400" aria-hidden="true" />
-              <span className="font-semibold">Dev Mode</span>
-            </div>
-            <button
-              onClick={() => setIsExpanded(false)}
-              className="rounded p-1 hover:bg-gray-800"
-              aria-label="Collapse dev info"
-            >
-              <ChevronDown className="h-4 w-4" />
-            </button>
-          </div>
-
-          {/* Info rows */}
-          <div className="space-y-2 text-gray-300">
-            {/* Git Branch */}
-            {showGitBranch && devInfo.branch && (
-              <div className="flex items-center gap-2">
-                <GitBranch className="h-4 w-4 text-gray-500" aria-hidden="true" />
-                <span className="truncate">{devInfo.branch}</span>
+        {/* Expanded content */}
+        {isExpanded && (
+          <div className="px-3 pb-3 space-y-2 border-t border-gray-700">
+            {/* Auth Status */}
+            {showUser && (
+              <div className="flex items-start gap-2 pt-2">
+                <User className="h-4 w-4 text-gray-400 mt-0.5" />
+                <div className="flex-1 min-w-0">
+                  <p className="text-xs text-gray-400">{translate('auth')}</p>
+                  {userEmail ? (
+                    <p className="text-xs text-green-400 truncate">{userEmail}</p>
+                  ) : (
+                    <p className="text-xs text-yellow-400">{translate('notAuthenticated')}</p>
+                  )}
+                </div>
               </div>
             )}
 
             {/* Database */}
             {showDatabase && (
-              <div className="flex items-center gap-2">
-                <Database className="h-4 w-4 text-gray-500" aria-hidden="true" />
-                <span className="truncate">
-                  {databaseId ?? devInfo.database ?? 'Local'}
-                  {(databasePort ?? devInfo.databasePort) && (
-                    <span className="ml-1 text-gray-500">
-                      :{databasePort ?? devInfo.databasePort}
-                    </span>
-                  )}
-                </span>
+              <div className="flex items-start gap-2">
+                <Database className="h-4 w-4 text-gray-400 mt-0.5" />
+                <div className="flex-1 min-w-0">
+                  <p className="text-xs text-gray-400">{translate('database')}</p>
+                  <p className="text-xs text-blue-400">
+                    {dbName}
+                    {dbPort && <span className="text-gray-500">:{dbPort}</span>}
+                  </p>
+                </div>
               </div>
             )}
 
-            {/* User */}
-            {showUser && (
-              <div className="flex items-center gap-2">
-                <User className="h-4 w-4 text-gray-500" aria-hidden="true" />
-                <span className="truncate">
-                  {userEmail ?? 'Not logged in'}
-                </span>
+            {/* Environment */}
+            <div className="flex items-start gap-2">
+              <Zap className="h-4 w-4 text-gray-400 mt-0.5" />
+              <div className="flex-1 min-w-0">
+                <p className="text-xs text-gray-400">{translate('environment')}</p>
+                <p className="text-xs text-purple-400 capitalize">{environment}</p>
               </div>
-            )}
-
-            {/* Environment badge */}
-            <div className="mt-2 flex items-center gap-2">
-              <span
-                className={`inline-flex rounded-full px-2 py-0.5 text-xs font-medium ${
-                  environment === 'production'
-                    ? 'bg-red-900 text-red-200'
-                    : environment === 'staging'
-                      ? 'bg-yellow-900 text-yellow-200'
-                      : 'bg-green-900 text-green-200'
-                }`}
-              >
-                {environment}
-              </span>
             </div>
+
+            {/* Git Branch - detailed view */}
+            {showGitBranch && branch && (
+              <div className="flex items-start gap-2">
+                <GitBranch className="h-4 w-4 text-gray-400 mt-0.5" />
+                <div className="flex-1 min-w-0">
+                  <p className="text-xs text-gray-400">{translate('branch')}</p>
+                  <p className="text-xs text-orange-400 truncate">{branch}</p>
+                </div>
+              </div>
+            )}
+
+            {/* User ID */}
+            {showUser && userId && (
+              <div className="pt-1 border-t border-gray-700">
+                <p className="text-xs text-gray-500">
+                  {translate('userId', { id: userId.substring(0, 8) + '...' })}
+                </p>
+              </div>
+            )}
           </div>
-        </div>
-      )}
+        )}
+      </div>
     </div>
   )
 }
