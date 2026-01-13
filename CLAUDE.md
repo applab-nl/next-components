@@ -1,3 +1,22 @@
+<!-- OPENSPEC:START -->
+# OpenSpec Instructions
+
+These instructions are for AI assistants working in this project.
+
+Always open `@/openspec/AGENTS.md` when the request:
+- Mentions planning or proposals (words like proposal, spec, change, plan)
+- Introduces new capabilities, breaking changes, architecture shifts, or big performance/security work
+- Sounds ambiguous and you need the authoritative spec before coding
+
+Use `@/openspec/AGENTS.md` to learn:
+- How to create and apply change proposals
+- Spec format and conventions
+- Project structure and guidelines
+
+Keep this managed block so 'openspec update' can refresh the instructions.
+
+<!-- OPENSPEC:END -->
+
 # @nextstack Development Guide
 
 Instructions for Claude Code when working on this monorepo.
@@ -6,9 +25,9 @@ Instructions for Claude Code when working on this monorepo.
 
 ```
 packages/
-├── core/       # Auth adapters, NextstackProvider
-├── devtools/   # DevModeIndicator, DevLoginPage
-├── feedback/   # FeedbackButton, ElementPicker, screenshots
+├── core/       # Auth adapters, NextstackProvider, ElementPicker
+├── devtools/   # DevTools, DevLoginPage
+├── feedback/   # FeedbackButton, screenshots
 ├── whats-new/  # WhatsNewDialog, WhatsNewBadge
 ├── theme/      # ThemeProvider, ThemeToggle
 ├── audit/      # AuditLogViewer, createAuditLog
