@@ -165,7 +165,7 @@ describe('DevTools', () => {
 
       await waitFor(() => {
         expect(mockClipboard.writeText).toHaveBeenCalledWith(
-          expect.stringContaining('Page: http://localhost:3000/test-page')
+          expect.stringContaining('Page: /test-page')
         )
         expect(mockClipboard.writeText).toHaveBeenCalledWith(
           expect.stringContaining('Element: "Submit Button"')

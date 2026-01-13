@@ -68,6 +68,19 @@ const defaultFields: CopyFields = {
 }
 
 /**
+ * Extract pathname from URL
+ */
+function getPathFromUrl(url: string): string {
+  try {
+    const urlObj = new URL(url)
+    return urlObj.pathname + urlObj.search + urlObj.hash
+  } catch {
+    // If URL parsing fails, return as-is
+    return url
+  }
+}
+
+/**
  * Format selected fields for clipboard
  */
 function formatFieldsForClipboard(
@@ -76,9 +89,10 @@ function formatFieldsForClipboard(
   fields: CopyFields
 ): string {
   const lines: string[] = []
+  const pagePath = getPathFromUrl(pageUrl)
 
   if (fields.pageUrl) {
-    lines.push(`Page: ${pageUrl}`)
+    lines.push(`Page: ${pagePath}`)
   }
   if (fields.elementName) {
     lines.push(`Element: "${elementInfo.friendlyName}"`)
@@ -94,6 +108,41 @@ function formatFieldsForClipboard(
   }
 
   return lines.join('\n')
+}
+
+/**
+ * Line type for color coding
+ */
+type LineType = 'page' | 'element' | 'css' | 'xpath' | 'tag'
+
+/**
+ * Generate preview lines with type info for coloring
+ */
+function getPreviewLines(
+  elementInfo: ElementInfo,
+  pageUrl: string,
+  fields: CopyFields
+): Array<{ type: LineType; text: string }> {
+  const lines: Array<{ type: LineType; text: string }> = []
+  const pagePath = getPathFromUrl(pageUrl)
+
+  if (fields.pageUrl) {
+    lines.push({ type: 'page', text: `Page: ${pagePath}` })
+  }
+  if (fields.elementName) {
+    lines.push({ type: 'element', text: `Element: "${elementInfo.friendlyName}"` })
+  }
+  if (fields.cssSelector) {
+    lines.push({ type: 'css', text: `Selector: ${elementInfo.cssSelector}` })
+  }
+  if (fields.xpath) {
+    lines.push({ type: 'xpath', text: `XPath: ${elementInfo.xpath}` })
+  }
+  if (fields.tagName) {
+    lines.push({ type: 'tag', text: `Tag: ${elementInfo.tagName}` })
+  }
+
+  return lines
 }
 
 export function ElementCopyDialog({
@@ -153,11 +202,26 @@ export function ElementCopyDialog({
     return () => document.removeEventListener('keydown', handleKeyDown)
   }, [isOpen, onClose])
 
-  // Generate preview text
+  // Generate preview text (for clipboard)
   const previewText = useMemo(() => {
     if (!elementInfo) return ''
     return formatFieldsForClipboard(elementInfo, pageUrl, fields)
   }, [elementInfo, pageUrl, fields])
+
+  // Generate colored preview lines
+  const previewLines = useMemo(() => {
+    if (!elementInfo) return []
+    return getPreviewLines(elementInfo, pageUrl, fields)
+  }, [elementInfo, pageUrl, fields])
+
+  // Color classes for each line type
+  const lineColors: Record<LineType, string> = {
+    page: 'text-green-600 dark:text-green-400',
+    element: 'text-green-600 dark:text-green-400',
+    css: 'text-blue-600 dark:text-blue-400',
+    xpath: 'text-purple-600 dark:text-purple-400',
+    tag: 'text-green-600 dark:text-green-400',
+  }
 
   // Copy to clipboard
   const copyToClipboard = useCallback(
@@ -315,9 +379,17 @@ export function ElementCopyDialog({
             <p className="text-xs font-medium text-gray-500 dark:text-gray-400 mb-2">
               {translate('preview')}
             </p>
-            <pre className="p-3 text-xs font-mono bg-gray-50 dark:bg-gray-900 rounded-md text-gray-700 dark:text-gray-300 overflow-x-auto whitespace-pre-wrap break-all border border-gray-200 dark:border-gray-700">
-              {previewText || <span className="text-gray-400 italic">No fields selected</span>}
-            </pre>
+            <div className="p-3 text-xs font-mono bg-gray-50 dark:bg-gray-900 rounded-md overflow-x-auto border border-gray-200 dark:border-gray-700">
+              {previewLines.length > 0 ? (
+                previewLines.map((line, index) => (
+                  <div key={index} className={`${lineColors[line.type]} break-all`}>
+                    {line.text}
+                  </div>
+                ))
+              ) : (
+                <span className="text-gray-400 italic">No fields selected</span>
+              )}
+            </div>
           </div>
         </div>
 
