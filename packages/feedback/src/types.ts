@@ -1,16 +1,8 @@
-/**
- * Element information captured by the element picker
- */
-export interface ElementInfo {
-  /** Human-readable element name */
-  friendlyName: string
-  /** CSS selector for the element */
-  cssSelector: string
-  /** XPath to the element */
-  xpath: string
-  /** HTML tag name (lowercase) */
-  tagName: string
-}
+// Re-export ElementInfo from core for backwards compatibility
+export type { ElementInfo } from '@nextstack/core/element-picker'
+
+// Import for local use
+import type { ElementInfo } from '@nextstack/core/element-picker'
 
 /**
  * Feedback input from user

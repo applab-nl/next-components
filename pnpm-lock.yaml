@@ -91,7 +91,7 @@ importers:
         version: 4.3.3
       '@nextstack/core':
         specifier: file:../../../packages/core
-        version: file:packages/core(@prisma/client@7.2.0(prisma@7.2.0(@types/react@19.2.8)(react-dom@19.2.3(react@19.2.3))(react@19.2.3)(typescript@5.9.3))(typescript@5.9.3))(@supabase/supabase-js@2.90.1)(react@19.2.3)
+        version: file:packages/core(@prisma/client@7.2.0(prisma@7.2.0(@types/react@19.2.8)(react-dom@19.2.3(react@19.2.3))(react@19.2.3)(typescript@5.9.3))(typescript@5.9.3))(@supabase/supabase-js@2.90.1)(lucide-react@0.562.0(react@19.2.3))(react-dom@19.2.3(react@19.2.3))(react@19.2.3)
       '@nextstack/devtools':
         specifier: file:../../../packages/devtools
         version: file:packages/devtools(lucide-react@0.562.0(react@19.2.3))(next-intl@4.7.0(next@16.1.1(@babel/core@7.28.5)(@opentelemetry/api@1.9.0)(@playwright/test@1.57.0)(react-dom@19.2.3(react@19.2.3))(react@19.2.3))(react@19.2.3)(typescript@5.9.3))(next@16.1.1(@babel/core@7.28.5)(@opentelemetry/api@1.9.0)(@playwright/test@1.57.0)(react-dom@19.2.3(react@19.2.3))(react@19.2.3))(react-dom@19.2.3(react@19.2.3))(react@19.2.3)
@@ -417,9 +417,18 @@ importers:
       '@types/react':
         specifier: ^19.0.4
         version: 19.2.8
+      '@types/react-dom':
+        specifier: ^19.0.2
+        version: 19.2.3(@types/react@19.2.8)
+      lucide-react:
+        specifier: ^0.469.0
+        version: 0.469.0(react@19.2.3)
       react:
         specifier: ^19.0.0
         version: 19.2.3
+      react-dom:
+        specifier: ^19.0.0
+        version: 19.2.3(react@19.2.3)
       typescript:
         specifier: ^5.7.3
         version: 5.9.3
@@ -1478,12 +1487,16 @@ packages:
       '@clerk/nextjs': '*'
       '@prisma/client': '>=5.0.0'
       '@supabase/supabase-js': '*'
+      lucide-react: '>=0.300.0'
       next-auth: '*'
       react: '>=18.0.0'
+      react-dom: '>=18.0.0'
     peerDependenciesMeta:
       '@clerk/nextjs':
         optional: true
       '@supabase/supabase-js':
+        optional: true
+      lucide-react:
         optional: true
       next-auth:
         optional: true
@@ -6970,12 +6983,14 @@ snapshots:
   '@next/swc-win32-x64-msvc@16.1.1':
     optional: true
 
-  '@nextstack/core@file:packages/core(@prisma/client@7.2.0(prisma@7.2.0(@types/react@19.2.8)(react-dom@19.2.3(react@19.2.3))(react@19.2.3)(typescript@5.9.3))(typescript@5.9.3))(@supabase/supabase-js@2.90.1)(react@19.2.3)':
+  '@nextstack/core@file:packages/core(@prisma/client@7.2.0(prisma@7.2.0(@types/react@19.2.8)(react-dom@19.2.3(react@19.2.3))(react@19.2.3)(typescript@5.9.3))(typescript@5.9.3))(@supabase/supabase-js@2.90.1)(lucide-react@0.562.0(react@19.2.3))(react-dom@19.2.3(react@19.2.3))(react@19.2.3)':
     dependencies:
       '@prisma/client': 7.2.0(prisma@7.2.0(@types/react@19.2.8)(react-dom@19.2.3(react@19.2.3))(react@19.2.3)(typescript@5.9.3))(typescript@5.9.3)
       react: 19.2.3
+      react-dom: 19.2.3(react@19.2.3)
     optionalDependencies:
       '@supabase/supabase-js': 2.90.1
+      lucide-react: 0.562.0(react@19.2.3)
 
   '@nextstack/devtools@file:packages/devtools(lucide-react@0.562.0(react@19.2.3))(next-intl@4.7.0(next@16.1.1(@babel/core@7.28.5)(@opentelemetry/api@1.9.0)(@playwright/test@1.57.0)(react-dom@19.2.3(react@19.2.3))(react@19.2.3))(react@19.2.3)(typescript@5.9.3))(next@16.1.1(@babel/core@7.28.5)(@opentelemetry/api@1.9.0)(@playwright/test@1.57.0)(react-dom@19.2.3(react@19.2.3))(react@19.2.3))(react-dom@19.2.3(react@19.2.3))(react@19.2.3)':
     dependencies:

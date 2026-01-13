@@ -1,10 +1,17 @@
-/**
- * Element Picker Utilities - Re-exported from @nextstack/core/element-picker
- *
- * This module has been moved to core for sharing between packages.
- * This file re-exports for backwards compatibility.
- */
+// @nextstack/core/element-picker - Shared element picker utilities
 
+// Components
+export { ElementPicker } from './ElementPicker'
+
+// Types
+export type {
+  ElementInfo,
+  ElementPickerProps,
+  HighlightPosition,
+  TooltipPosition,
+} from './types'
+
+// Utilities
 export {
   // Element info generation
   getElementInfo,
@@ -28,6 +35,4 @@ export {
   clearNameCaches,
   getNameGenerationMetrics,
   resetNameGenerationMetrics,
-} from '@nextstack/core/element-picker'
-
-export type { ElementInfo } from '@nextstack/core/element-picker'
+} from './element-picker-utils'

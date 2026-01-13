@@ -10,3 +10,6 @@ export type { NextstackConfig, MultiTenancyConfig, FeatureFlags } from './config
 
 // Utilities
 export { getIpAddress, getUserAgent, getRequestMetadata } from './utils/request'
+
+// Element Picker (re-export core types for convenience)
+export type { ElementInfo } from './element-picker/types'

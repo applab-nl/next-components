@@ -1,12 +1,16 @@
 // @nextstack/devtools - Developer experience tools
 
 // Components
+export { DevTools } from './components/DevTools'
+export type { DevToolsProps, DevToolsTranslations } from './components/DevTools'
+export { DevLoginPage } from './components/DevLoginPage'
+
+// Deprecated - use DevTools instead
 export { DevModeIndicator } from './components/DevModeIndicator'
 export type {
   DevModeIndicatorProps,
   DevModeIndicatorTranslations,
 } from './components/DevModeIndicator'
-export { DevLoginPage } from './components/DevLoginPage'
 
 // Configuration
 export { defineTestUsers } from './config/test-users'

@@ -26,6 +26,10 @@
     "./auth/next-auth": {
       "types": "./dist/auth/adapters/next-auth.d.ts",
       "import": "./dist/auth/adapters/next-auth.js"
+    },
+    "./element-picker": {
+      "types": "./dist/element-picker/index.d.ts",
+      "import": "./dist/element-picker/index.js"
     }
   },
   "files": ["dist"],
@@ -39,7 +43,9 @@
   },
   "peerDependencies": {
     "@prisma/client": ">=5.0.0",
-    "react": ">=18.0.0"
+    "lucide-react": ">=0.300.0",
+    "react": ">=18.0.0",
+    "react-dom": ">=18.0.0"
   },
   "peerDependenciesMeta": {
     "@supabase/supabase-js": {
@@ -50,12 +56,18 @@
     },
     "next-auth": {
       "optional": true
+    },
+    "lucide-react": {
+      "optional": true
     }
   },
   "devDependencies": {
     "@prisma/client": "^6.2.1",
     "@types/react": "^19.0.4",
+    "@types/react-dom": "^19.0.2",
+    "lucide-react": "^0.469.0",
     "react": "^19.0.0",
+    "react-dom": "^19.0.0",
     "typescript": "^5.7.3"
   }
 }
