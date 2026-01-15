@@ -1,6 +1,6 @@
 {
   "name": "@nextdevx/devtools",
-  "version": "0.2.0",
+  "version": "0.2.1",
   "description": "Developer experience tools - dev mode indicator, dev-login page",
   "license": "MIT",
   "author": "Dylan van Iersel",
@@ -51,7 +51,7 @@
     "clean": "rm -rf dist .turbo"
   },
   "dependencies": {
-    "@nextdevx/core": "workspace:*"
+    "@nextdevx/core": "^0.2.0"
   },
   "peerDependencies": {
     "lucide-react": ">=0.300.0",

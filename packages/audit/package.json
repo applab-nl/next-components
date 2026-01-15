@@ -1,6 +1,6 @@
 {
   "name": "@nextdevx/audit",
-  "version": "0.2.0",
+  "version": "0.2.1",
   "description": "Audit logging system with sensitive field sanitization",
   "license": "MIT",
   "author": "Dylan van Iersel",
@@ -52,7 +52,7 @@
     "clean": "rm -rf dist .turbo"
   },
   "dependencies": {
-    "@nextdevx/core": "workspace:*"
+    "@nextdevx/core": "^0.2.0"
   },
   "peerDependencies": {
     "@prisma/client": ">=5.0.0",
