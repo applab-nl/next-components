@@ -1,6 +1,6 @@
 {
   "name": "@nextdevx/cli",
-  "version": "0.2.0",
+  "version": "0.2.2",
   "description": "CLI for @nextdevx package setup and migrations",
   "license": "MIT",
   "author": "Dylan van Iersel",

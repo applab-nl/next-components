@@ -1,6 +1,6 @@
 {
   "name": "@nextdevx/theme",
-  "version": "0.2.0",
+  "version": "0.2.2",
   "description": "Theme provider with light/dark/system modes and optional DB persistence",
   "license": "MIT",
   "author": "Dylan van Iersel",

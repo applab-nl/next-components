@@ -1,6 +1,6 @@
 {
   "name": "@nextdevx/core",
-  "version": "0.2.0",
+  "version": "0.2.2",
   "description": "Core utilities, auth adapters, and configuration for @nextdevx packages",
   "license": "MIT",
   "author": "Dylan van Iersel",

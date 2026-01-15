@@ -1,6 +1,6 @@
 {
   "name": "@nextdevx/feedback",
-  "version": "0.2.1",
+  "version": "0.2.2",
   "description": "User feedback system with element picker, screenshots, and issue tracker integration",
   "license": "MIT",
   "author": "Dylan van Iersel",

@@ -1,6 +1,6 @@
 {
   "name": "@nextdevx/whats-new",
-  "version": "0.2.1",
+  "version": "0.2.2",
   "description": "What's new / changelog component with voting and feedback linking",
   "license": "MIT",
   "author": "Dylan van Iersel",
