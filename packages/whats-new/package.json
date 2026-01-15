@@ -1,6 +1,6 @@
 {
   "name": "@nextdevx/whats-new",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "description": "What's new / changelog component with voting and feedback linking",
   "license": "MIT",
   "author": "Dylan van Iersel",
@@ -13,7 +13,14 @@
   "bugs": {
     "url": "https://github.com/applab-nl/next-components/issues"
   },
-  "keywords": ["nextjs", "react", "changelog", "whats-new", "release-notes", "voting"],
+  "keywords": [
+    "nextjs",
+    "react",
+    "changelog",
+    "whats-new",
+    "release-notes",
+    "voting"
+  ],
   "publishConfig": {
     "access": "public"
   },
@@ -32,7 +39,10 @@
       "import": "./dist/admin/index.js"
     }
   },
-  "files": ["dist", "prisma"],
+  "files": [
+    "dist",
+    "prisma"
+  ],
   "scripts": {
     "build": "tsc",
     "dev": "tsc --watch",

@@ -1,6 +1,6 @@
 {
   "name": "@nextdevx/devtools",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "description": "Developer experience tools - dev mode indicator, dev-login page",
   "license": "MIT",
   "author": "Dylan van Iersel",
@@ -13,7 +13,14 @@
   "bugs": {
     "url": "https://github.com/applab-nl/next-components/issues"
   },
-  "keywords": ["nextjs", "react", "devtools", "development", "debugging", "element-picker"],
+  "keywords": [
+    "nextjs",
+    "react",
+    "devtools",
+    "development",
+    "debugging",
+    "element-picker"
+  ],
   "publishConfig": {
     "access": "public"
   },
@@ -32,7 +39,9 @@
       "import": "./dist/api/index.js"
     }
   },
-  "files": ["dist"],
+  "files": [
+    "dist"
+  ],
   "scripts": {
     "build": "tsc",
     "dev": "tsc --watch",

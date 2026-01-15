@@ -1,6 +1,6 @@
 {
   "name": "@nextdevx/core",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "description": "Core utilities, auth adapters, and configuration for @nextdevx packages",
   "license": "MIT",
   "author": "Dylan van Iersel",
@@ -13,7 +13,15 @@
   "bugs": {
     "url": "https://github.com/applab-nl/next-components/issues"
   },
-  "keywords": ["nextjs", "react", "auth", "adapter", "supabase", "clerk", "next-auth"],
+  "keywords": [
+    "nextjs",
+    "react",
+    "auth",
+    "adapter",
+    "supabase",
+    "clerk",
+    "next-auth"
+  ],
   "publishConfig": {
     "access": "public"
   },
@@ -48,7 +56,9 @@
       "import": "./dist/element-picker/index.js"
     }
   },
-  "files": ["dist"],
+  "files": [
+    "dist"
+  ],
   "scripts": {
     "build": "tsc",
     "dev": "tsc --watch",

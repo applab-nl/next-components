@@ -1,6 +1,6 @@
 {
   "name": "@nextdevx/theme",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "description": "Theme provider with light/dark/system modes and optional DB persistence",
   "license": "MIT",
   "author": "Dylan van Iersel",
@@ -13,7 +13,14 @@
   "bugs": {
     "url": "https://github.com/applab-nl/next-components/issues"
   },
-  "keywords": ["nextjs", "react", "theme", "dark-mode", "light-mode", "theme-provider"],
+  "keywords": [
+    "nextjs",
+    "react",
+    "theme",
+    "dark-mode",
+    "light-mode",
+    "theme-provider"
+  ],
   "publishConfig": {
     "access": "public"
   },
@@ -28,7 +35,9 @@
       "import": "./dist/index.js"
     }
   },
-  "files": ["dist"],
+  "files": [
+    "dist"
+  ],
   "scripts": {
     "build": "tsc",
     "dev": "tsc --watch",

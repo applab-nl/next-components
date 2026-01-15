@@ -1,6 +1,6 @@
 {
   "name": "@nextdevx/feedback",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "description": "User feedback system with element picker, screenshots, and issue tracker integration",
   "license": "MIT",
   "author": "Dylan van Iersel",
@@ -13,7 +13,14 @@
   "bugs": {
     "url": "https://github.com/applab-nl/next-components/issues"
   },
-  "keywords": ["nextjs", "react", "feedback", "screenshot", "bug-report", "user-feedback"],
+  "keywords": [
+    "nextjs",
+    "react",
+    "feedback",
+    "screenshot",
+    "bug-report",
+    "user-feedback"
+  ],
   "publishConfig": {
     "access": "public"
   },
@@ -36,7 +43,10 @@
       "import": "./dist/api/index.js"
     }
   },
-  "files": ["dist", "prisma"],
+  "files": [
+    "dist",
+    "prisma"
+  ],
   "scripts": {
     "build": "tsc",
     "dev": "tsc --watch",
