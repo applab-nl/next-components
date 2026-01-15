@@ -1,7 +1,22 @@
 {
-  "name": "@nextstack/cli",
+  "name": "@nextdevx/cli",
   "version": "0.1.0",
-  "description": "CLI for @nextstack package setup and migrations",
+  "description": "CLI for @nextdevx package setup and migrations",
+  "license": "MIT",
+  "author": "Dylan van Iersel",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/applab-nl/next-components.git",
+    "directory": "packages/cli"
+  },
+  "homepage": "https://github.com/applab-nl/next-components/tree/main/packages/cli#readme",
+  "bugs": {
+    "url": "https://github.com/applab-nl/next-components/issues"
+  },
+  "keywords": ["nextjs", "cli", "nextstack", "setup", "migrations"],
+  "publishConfig": {
+    "access": "public"
+  },
   "type": "module",
   "bin": {
     "nextstack": "./dist/bin.js"

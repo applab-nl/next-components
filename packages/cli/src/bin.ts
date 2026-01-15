@@ -5,17 +5,17 @@ import { addCommand } from './commands/add'
 
 program
   .name('nextstack')
-  .description('CLI for @nextstack package setup and migrations')
+  .description('CLI for @nextdevx package setup and migrations')
   .version('0.1.0')
 
 program
   .command('init')
-  .description('Initialize @nextstack in your project')
+  .description('Initialize @nextdevx in your project')
   .action(initCommand)
 
 program
   .command('add <package>')
-  .description('Add a @nextstack package to your project')
+  .description('Add a @nextdevx package to your project')
   .action(addCommand)
 
 program.parse()

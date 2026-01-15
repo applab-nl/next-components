@@ -1,5 +1,5 @@
 export const whatsNewApiRoute = `import { NextResponse } from 'next/server'
-import { createWhatsNewService } from '@nextstack/whats-new'
+import { createWhatsNewService } from '@nextdevx/whats-new'
 import { prisma } from '@/lib/prisma'
 import { auth } from '@/lib/auth'
 
@@ -19,7 +19,7 @@ export async function GET() {
 `
 
 export const whatsNewVoteRoute = `import { NextRequest, NextResponse } from 'next/server'
-import { createWhatsNewService } from '@nextstack/whats-new'
+import { createWhatsNewService } from '@nextdevx/whats-new'
 import { prisma } from '@/lib/prisma'
 import { auth } from '@/lib/auth'
 

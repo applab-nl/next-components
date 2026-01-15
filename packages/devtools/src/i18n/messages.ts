@@ -3,7 +3,7 @@
  *
  * Merge into your next-intl messages:
  * ```ts
- * import { devtoolsMessages } from '@nextstack/devtools'
+ * import { devtoolsMessages } from '@nextdevx/devtools'
  *
  * const messages = {
  *   ...devtoolsMessages.en,

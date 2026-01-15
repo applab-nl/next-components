@@ -1,8 +1,8 @@
 // Re-export ElementInfo from core for backwards compatibility
-export type { ElementInfo } from '@nextstack/core/element-picker'
+export type { ElementInfo } from '@nextdevx/core/element-picker'
 
 // Import for local use
-import type { ElementInfo } from '@nextstack/core/element-picker'
+import type { ElementInfo } from '@nextdevx/core/element-picker'
 
 /**
  * Feedback input from user

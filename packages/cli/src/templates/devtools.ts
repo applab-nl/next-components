@@ -39,7 +39,7 @@ export async function GET() {
 
 export const devLoginPage = `'use client'
 
-import { DevLoginPage } from '@nextstack/devtools'
+import { DevLoginPage } from '@nextdevx/devtools'
 
 // Configure your test users here
 const testUsers = [

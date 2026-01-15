@@ -3,13 +3,13 @@ import { render, screen, fireEvent, waitFor } from '@testing-library/react'
 import { DevTools } from './DevTools'
 import * as environmentModule from '../utils/environment'
 
-// Mock @nextstack/core
-vi.mock('@nextstack/core', () => ({
+// Mock @nextdevx/core
+vi.mock('@nextdevx/core', () => ({
   useAuthOptional: vi.fn(),
 }))
 
-// Mock @nextstack/core/element-picker
-vi.mock('@nextstack/core/element-picker', () => ({
+// Mock @nextdevx/core/element-picker
+vi.mock('@nextdevx/core/element-picker', () => ({
   ElementPicker: vi.fn(({ isOpen, onSelect, onCancel }) => {
     if (!isOpen) return null
     return (
@@ -39,7 +39,7 @@ vi.mock('../utils/environment', () => ({
 }))
 
 // Import the mocked module
-import { useAuthOptional } from '@nextstack/core'
+import { useAuthOptional } from '@nextdevx/core'
 
 describe('DevTools', () => {
   const mockFetch = vi.fn()

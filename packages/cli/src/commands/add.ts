@@ -17,7 +17,7 @@ const VALID_PACKAGES = [
 ]
 
 export async function addCommand(packageName: string) {
-  console.log(pc.bold(`\nAdding @nextstack/${packageName}\n`))
+  console.log(pc.bold(`\nAdding @nextdevx/${packageName}\n`))
 
   if (!VALID_PACKAGES.includes(packageName)) {
     console.log(pc.red(`Unknown package: ${packageName}`))
@@ -33,7 +33,7 @@ export async function addCommand(packageName: string) {
     console.log(pc.yellow('⚠ Could not detect Next.js App Router structure.'))
     console.log(pc.dim('Make sure you are in a Next.js project root with an app/ directory.\n'))
   } else if (router === 'pages') {
-    console.log(pc.yellow('⚠ Pages Router detected. @nextstack packages require App Router.\n'))
+    console.log(pc.yellow('⚠ Pages Router detected. @nextdevx packages require App Router.\n'))
   } else {
     console.log(pc.dim(`Detected: App Router\n`))
   }
@@ -69,7 +69,7 @@ export async function addCommand(packageName: string) {
   const files = generatePackageFiles(packageName, options)
 
   if (files.length === 0) {
-    console.log(pc.yellow(`No API routes to generate for @nextstack/${packageName}`))
+    console.log(pc.yellow(`No API routes to generate for @nextdevx/${packageName}`))
     console.log(pc.dim('This package may only require component imports.\n'))
   } else {
     printGeneratedFiles(files)
@@ -79,7 +79,7 @@ export async function addCommand(packageName: string) {
 
   // Print dependency to add
   console.log(pc.cyan('Add this dependency to your package.json:'))
-  console.log(pc.dim(`  "@nextstack/${packageName}": "github:nextstack-dev/next-components#main"`))
+  console.log(pc.dim(`  "@nextdevx/${packageName}": "github:nextstack-dev/next-components#main"`))
 
   console.log(pc.cyan('\nNext steps:'))
   console.log('1. Run pnpm install')

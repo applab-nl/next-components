@@ -1,5 +1,5 @@
 import type { PrismaClient } from '@prisma/client'
-import type { AuthAdapter } from '@nextstack/core'
+import type { AuthAdapter } from '@nextdevx/core'
 import type { AuditLog, AuditQueryParams } from '../types'
 
 export interface AuditService {

@@ -1,5 +1,5 @@
 import type { PrismaClient } from '@prisma/client'
-import type { AuthAdapter } from '@nextstack/core'
+import type { AuthAdapter } from '@nextdevx/core'
 import type { Feedback, FeedbackInput, FeedbackStatus } from '../types'
 
 export interface FeedbackService {

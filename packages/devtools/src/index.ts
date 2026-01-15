@@ -1,4 +1,4 @@
-// @nextstack/devtools - Developer experience tools
+// @nextdevx/devtools - Developer experience tools
 
 // Components
 export { DevTools } from './components/DevTools'

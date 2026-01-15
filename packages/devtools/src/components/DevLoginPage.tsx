@@ -19,7 +19,7 @@ import {
   Loader2,
   AlertCircle,
 } from 'lucide-react'
-import { useAuth } from '@nextstack/core'
+import { useAuth } from '@nextdevx/core'
 import type { TestUser, IconName, BadgeColor } from '../config/test-users'
 import { groupUsersByCategory } from '../config/test-users'
 import { isLocalhost } from '../utils/environment'

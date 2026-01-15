@@ -17,7 +17,7 @@ Keep this managed block so 'openspec update' can refresh the instructions.
 
 <!-- OPENSPEC:END -->
 
-# @nextstack Development Guide
+# @nextdevx Development Guide
 
 Instructions for Claude Code when working on this monorepo.
 
@@ -42,7 +42,7 @@ pnpm build            # Build all packages
 pnpm test             # Run tests (149 tests)
 pnpm typecheck        # Type check all packages
 pnpm lint             # Lint all packages
-pnpm --filter @nextstack/feedback build  # Build specific package
+pnpm --filter @nextdevx/feedback build  # Build specific package
 ```
 
 ## Code Patterns
@@ -103,7 +103,7 @@ Current: 149 passing tests, 1 skipped (XPath in happy-dom).
 ## Adding New Packages
 
 1. Create `packages/{name}/`
-2. Add `package.json` with `@nextstack/{name}`
+2. Add `package.json` with `@nextdevx/{name}`
 3. Create `src/index.ts` entry point
 4. Add `tsconfig.json` extending `../../tsconfig.base.json`
 5. If DB needed, add `prisma/schema.prisma`

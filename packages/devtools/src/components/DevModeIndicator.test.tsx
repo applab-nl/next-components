@@ -3,8 +3,8 @@ import { render, screen, fireEvent, waitFor } from '@testing-library/react'
 import { DevModeIndicator } from './DevModeIndicator'
 import * as environmentModule from '../utils/environment'
 
-// Mock @nextstack/core
-vi.mock('@nextstack/core', () => ({
+// Mock @nextdevx/core
+vi.mock('@nextdevx/core', () => ({
   useAuthOptional: vi.fn(),
 }))
 
@@ -15,7 +15,7 @@ vi.mock('../utils/environment', () => ({
 }))
 
 // Import the mocked module
-import { useAuthOptional } from '@nextstack/core'
+import { useAuthOptional } from '@nextdevx/core'
 
 describe('DevModeIndicator', () => {
   const mockFetch = vi.fn()

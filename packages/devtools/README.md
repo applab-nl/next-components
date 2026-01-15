@@ -1,11 +1,11 @@
-# @nextstack/devtools
+# @nextdevx/devtools
 
 Developer experience tools for Next.js applications. Provides a floating indicator showing development environment info and tools for AI-assisted development.
 
 ## Installation
 
 ```bash
-pnpm add @nextstack/devtools
+pnpm add @nextdevx/devtools
 ```
 
 ## Components
@@ -15,7 +15,7 @@ pnpm add @nextstack/devtools
 A floating development panel that displays environment info and provides developer utilities.
 
 ```tsx
-import { DevTools } from '@nextstack/devtools'
+import { DevTools } from '@nextdevx/devtools'
 
 export default function RootLayout({ children }) {
   return (
@@ -78,7 +78,7 @@ Tag: button
 A development-only login page for quickly switching between test accounts.
 
 ```tsx
-import { DevLoginPage, defineTestUsers } from '@nextstack/devtools'
+import { DevLoginPage, defineTestUsers } from '@nextdevx/devtools'
 
 const testUsers = defineTestUsers([
   { email: 'admin@example.com', password: 'test123', name: 'Admin User', role: 'admin' },
@@ -116,7 +116,7 @@ export async function GET() {
 
 ```tsx
 import { useTranslations } from 'next-intl'
-import { DevTools } from '@nextstack/devtools'
+import { DevTools } from '@nextdevx/devtools'
 
 function DevToolsWrapper() {
   const t = useTranslations('devMode')
@@ -149,7 +149,7 @@ function DevToolsWrapper() {
 Import default messages to merge with your i18n setup:
 
 ```ts
-import { devtoolsMessages } from '@nextstack/devtools'
+import { devtoolsMessages } from '@nextdevx/devtools'
 
 // English and Dutch translations included
 const messages = {
@@ -164,11 +164,11 @@ const messages = {
 
 ```tsx
 // Before (deprecated)
-import { DevModeIndicator } from '@nextstack/devtools'
+import { DevModeIndicator } from '@nextdevx/devtools'
 <DevModeIndicator />
 
 // After (recommended)
-import { DevTools } from '@nextstack/devtools'
+import { DevTools } from '@nextdevx/devtools'
 <DevTools />
 ```
 

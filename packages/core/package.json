@@ -1,7 +1,23 @@
 {
-  "name": "@nextstack/core",
+  "name": "@nextdevx/core",
   "version": "0.1.0",
-  "description": "Core utilities, auth adapters, and configuration for @nextstack packages",
+  "description": "Core utilities, auth adapters, and configuration for @nextdevx packages",
+  "license": "MIT",
+  "author": "Dylan van Iersel",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/applab-nl/next-components.git",
+    "directory": "packages/core"
+  },
+  "homepage": "https://github.com/applab-nl/next-components/tree/main/packages/core#readme",
+  "bugs": {
+    "url": "https://github.com/applab-nl/next-components/issues"
+  },
+  "keywords": ["nextjs", "react", "auth", "adapter", "supabase", "clerk", "next-auth"],
+  "publishConfig": {
+    "access": "public"
+  },
+  "sideEffects": false,
   "type": "module",
   "main": "./dist/index.js",
   "module": "./dist/index.js",

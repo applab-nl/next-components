@@ -1,4 +1,4 @@
-// @nextstack/core - Core utilities and configuration
+// @nextdevx/core - Core utilities and configuration
 
 // Auth
 export type { AuthUser, AuthAdapter, AuthProvider } from './auth/types'

@@ -1,7 +1,23 @@
 {
-  "name": "@nextstack/devtools",
+  "name": "@nextdevx/devtools",
   "version": "0.1.0",
   "description": "Developer experience tools - dev mode indicator, dev-login page",
+  "license": "MIT",
+  "author": "Dylan van Iersel",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/applab-nl/next-components.git",
+    "directory": "packages/devtools"
+  },
+  "homepage": "https://github.com/applab-nl/next-components/tree/main/packages/devtools#readme",
+  "bugs": {
+    "url": "https://github.com/applab-nl/next-components/issues"
+  },
+  "keywords": ["nextjs", "react", "devtools", "development", "debugging", "element-picker"],
+  "publishConfig": {
+    "access": "public"
+  },
+  "sideEffects": false,
   "type": "module",
   "main": "./dist/index.js",
   "module": "./dist/index.js",
@@ -26,7 +42,7 @@
     "clean": "rm -rf dist .turbo"
   },
   "dependencies": {
-    "@nextstack/core": "workspace:*"
+    "@nextdevx/core": "workspace:*"
   },
   "peerDependencies": {
     "lucide-react": ">=0.300.0",

@@ -89,13 +89,13 @@ importers:
       '@mollie/api-client':
         specifier: ^4.3.3
         version: 4.3.3
-      '@nextstack/core':
+      '@nextdevx/core':
         specifier: file:../../../packages/core
         version: file:packages/core(@prisma/client@7.2.0(prisma@7.2.0(@types/react@19.2.8)(react-dom@19.2.3(react@19.2.3))(react@19.2.3)(typescript@5.9.3))(typescript@5.9.3))(@supabase/supabase-js@2.90.1)(lucide-react@0.562.0(react@19.2.3))(react-dom@19.2.3(react@19.2.3))(react@19.2.3)
-      '@nextstack/devtools':
+      '@nextdevx/devtools':
         specifier: file:../../../packages/devtools
         version: file:packages/devtools(lucide-react@0.562.0(react@19.2.3))(next-intl@4.7.0(next@16.1.1(@babel/core@7.28.5)(@opentelemetry/api@1.9.0)(@playwright/test@1.57.0)(react-dom@19.2.3(react@19.2.3))(react@19.2.3))(react@19.2.3)(typescript@5.9.3))(next@16.1.1(@babel/core@7.28.5)(@opentelemetry/api@1.9.0)(@playwright/test@1.57.0)(react-dom@19.2.3(react@19.2.3))(react@19.2.3))(react-dom@19.2.3(react@19.2.3))(react@19.2.3)
-      '@nextstack/theme':
+      '@nextdevx/theme':
         specifier: file:../../../packages/theme
         version: file:packages/theme(lucide-react@0.562.0(react@19.2.3))(react@19.2.3)
       '@supabase/ssr':
@@ -216,13 +216,13 @@ importers:
       '@hookform/resolvers':
         specifier: ^5.2.2
         version: 5.2.2(react-hook-form@7.71.0(react@19.2.3))
-      '@nextstack/core':
+      '@nextdevx/core':
         specifier: workspace:*
         version: link:../../packages/core
-      '@nextstack/devtools':
+      '@nextdevx/devtools':
         specifier: workspace:*
         version: link:../../packages/devtools
-      '@nextstack/theme':
+      '@nextdevx/theme':
         specifier: workspace:*
         version: link:../../packages/theme
       '@prisma/adapter-pg':
@@ -364,7 +364,7 @@ importers:
 
   packages/audit:
     dependencies:
-      '@nextstack/core':
+      '@nextdevx/core':
         specifier: workspace:*
         version: link:../core
     devDependencies:
@@ -435,7 +435,7 @@ importers:
 
   packages/devtools:
     dependencies:
-      '@nextstack/core':
+      '@nextdevx/core':
         specifier: workspace:*
         version: link:../core
     devDependencies:
@@ -466,7 +466,7 @@ importers:
 
   packages/feedback:
     dependencies:
-      '@nextstack/core':
+      '@nextdevx/core':
         specifier: workspace:*
         version: link:../core
     devDependencies:
@@ -518,7 +518,7 @@ importers:
 
   packages/whats-new:
     dependencies:
-      '@nextstack/core':
+      '@nextdevx/core':
         specifier: workspace:*
         version: link:../core
     devDependencies:
@@ -1481,7 +1481,7 @@ packages:
     cpu: [x64]
     os: [win32]
 
-  '@nextstack/core@file:packages/core':
+  '@nextdevx/core@file:packages/core':
     resolution: {directory: packages/core, type: directory}
     peerDependencies:
       '@clerk/nextjs': '*'
@@ -1501,7 +1501,7 @@ packages:
       next-auth:
         optional: true
 
-  '@nextstack/devtools@file:packages/devtools':
+  '@nextdevx/devtools@file:packages/devtools':
     resolution: {directory: packages/devtools, type: directory}
     peerDependencies:
       lucide-react: '>=0.300.0'
@@ -1513,7 +1513,7 @@ packages:
       next-intl:
         optional: true
 
-  '@nextstack/theme@file:packages/theme':
+  '@nextdevx/theme@file:packages/theme':
     resolution: {directory: packages/theme, type: directory}
     peerDependencies:
       lucide-react: '>=0.300.0'
@@ -6983,7 +6983,7 @@ snapshots:
   '@next/swc-win32-x64-msvc@16.1.1':
     optional: true
 
-  '@nextstack/core@file:packages/core(@prisma/client@7.2.0(prisma@7.2.0(@types/react@19.2.8)(react-dom@19.2.3(react@19.2.3))(react@19.2.3)(typescript@5.9.3))(typescript@5.9.3))(@supabase/supabase-js@2.90.1)(lucide-react@0.562.0(react@19.2.3))(react-dom@19.2.3(react@19.2.3))(react@19.2.3)':
+  '@nextdevx/core@file:packages/core(@prisma/client@7.2.0(prisma@7.2.0(@types/react@19.2.8)(react-dom@19.2.3(react@19.2.3))(react@19.2.3)(typescript@5.9.3))(typescript@5.9.3))(@supabase/supabase-js@2.90.1)(lucide-react@0.562.0(react@19.2.3))(react-dom@19.2.3(react@19.2.3))(react@19.2.3)':
     dependencies:
       '@prisma/client': 7.2.0(prisma@7.2.0(@types/react@19.2.8)(react-dom@19.2.3(react@19.2.3))(react@19.2.3)(typescript@5.9.3))(typescript@5.9.3)
       react: 19.2.3
@@ -6992,9 +6992,9 @@ snapshots:
       '@supabase/supabase-js': 2.90.1
       lucide-react: 0.562.0(react@19.2.3)
 
-  '@nextstack/devtools@file:packages/devtools(lucide-react@0.562.0(react@19.2.3))(next-intl@4.7.0(next@16.1.1(@babel/core@7.28.5)(@opentelemetry/api@1.9.0)(@playwright/test@1.57.0)(react-dom@19.2.3(react@19.2.3))(react@19.2.3))(react@19.2.3)(typescript@5.9.3))(next@16.1.1(@babel/core@7.28.5)(@opentelemetry/api@1.9.0)(@playwright/test@1.57.0)(react-dom@19.2.3(react@19.2.3))(react@19.2.3))(react-dom@19.2.3(react@19.2.3))(react@19.2.3)':
+  '@nextdevx/devtools@file:packages/devtools(lucide-react@0.562.0(react@19.2.3))(next-intl@4.7.0(next@16.1.1(@babel/core@7.28.5)(@opentelemetry/api@1.9.0)(@playwright/test@1.57.0)(react-dom@19.2.3(react@19.2.3))(react@19.2.3))(react@19.2.3)(typescript@5.9.3))(next@16.1.1(@babel/core@7.28.5)(@opentelemetry/api@1.9.0)(@playwright/test@1.57.0)(react-dom@19.2.3(react@19.2.3))(react@19.2.3))(react-dom@19.2.3(react@19.2.3))(react@19.2.3)':
     dependencies:
-      '@nextstack/core': link:packages/core
+      '@nextdevx/core': link:packages/core
       lucide-react: 0.562.0(react@19.2.3)
       next: 16.1.1(@babel/core@7.28.5)(@opentelemetry/api@1.9.0)(@playwright/test@1.57.0)(react-dom@19.2.3(react@19.2.3))(react@19.2.3)
       react: 19.2.3
@@ -7002,7 +7002,7 @@ snapshots:
     optionalDependencies:
       next-intl: 4.7.0(next@16.1.1(@babel/core@7.28.5)(@opentelemetry/api@1.9.0)(@playwright/test@1.57.0)(react-dom@19.2.3(react@19.2.3))(react@19.2.3))(react@19.2.3)(typescript@5.9.3)
 
-  '@nextstack/theme@file:packages/theme(lucide-react@0.562.0(react@19.2.3))(react@19.2.3)':
+  '@nextdevx/theme@file:packages/theme(lucide-react@0.562.0(react@19.2.3))(react@19.2.3)':
     dependencies:
       lucide-react: 0.562.0(react@19.2.3)
       react: 19.2.3

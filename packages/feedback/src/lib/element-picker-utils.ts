@@ -1,5 +1,5 @@
 /**
- * Element Picker Utilities - Re-exported from @nextstack/core/element-picker
+ * Element Picker Utilities - Re-exported from @nextdevx/core/element-picker
  *
  * This module has been moved to core for sharing between packages.
  * This file re-exports for backwards compatibility.
@@ -28,6 +28,6 @@ export {
   clearNameCaches,
   getNameGenerationMetrics,
   resetNameGenerationMetrics,
-} from '@nextstack/core/element-picker'
+} from '@nextdevx/core/element-picker'
 
-export type { ElementInfo } from '@nextstack/core/element-picker'
+export type { ElementInfo } from '@nextdevx/core/element-picker'

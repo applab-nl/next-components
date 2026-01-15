@@ -1,4 +1,4 @@
-// @nextstack/audit - Audit logging system
+// @nextdevx/audit - Audit logging system
 
 export {
   createAuditLog,

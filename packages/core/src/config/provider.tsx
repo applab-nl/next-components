@@ -15,7 +15,7 @@ export interface NextstackProviderProps {
 }
 
 /**
- * Provider for @nextstack configuration
+ * Provider for @nextdevx configuration
  *
  * @example
  * ```tsx
@@ -50,7 +50,7 @@ export function NextstackProvider({ config, children }: NextstackProviderProps) 
 }
 
 /**
- * Hook to access @nextstack configuration
+ * Hook to access @nextdevx configuration
  */
 export function useNextstackConfig(): NextstackConfig {
   const config = useContext(NextstackContext)

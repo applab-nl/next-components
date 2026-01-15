@@ -1,4 +1,4 @@
-// @nextstack/whats-new - Changelog with voting
+// @nextdevx/whats-new - Changelog with voting
 
 // Components
 export { WhatsNewDialog } from './components/WhatsNewDialog'

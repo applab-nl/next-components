@@ -1,4 +1,4 @@
-// @nextstack/core/element-picker - Shared element picker utilities
+// @nextdevx/core/element-picker - Shared element picker utilities
 
 // Components
 export { ElementPicker } from './ElementPicker'

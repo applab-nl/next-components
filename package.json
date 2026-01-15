@@ -5,7 +5,11 @@
   "description": "Reusable Next.js components and utilities",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/your-org/nextstack.git"
+    "url": "git+https://github.com/applab-nl/next-components.git"
+  },
+  "homepage": "https://github.com/applab-nl/next-components#readme",
+  "bugs": {
+    "url": "https://github.com/applab-nl/next-components/issues"
   },
   "author": "Dylan van Iersel",
   "license": "MIT",
@@ -24,7 +28,10 @@
     "test": "turbo run test",
     "test:watch": "turbo run test:watch",
     "clean": "turbo run clean && rm -rf node_modules .turbo",
-    "prepare": "husky"
+    "prepare": "husky",
+    "changeset": "changeset",
+    "version": "changeset version",
+    "release": "pnpm build && changeset publish"
   },
   "devDependencies": {
     "@testing-library/dom": "^10.4.1",

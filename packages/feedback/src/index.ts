@@ -1,4 +1,4 @@
-// @nextstack/feedback - User feedback system
+// @nextdevx/feedback - User feedback system
 
 // Components
 export { FeedbackButton } from './components/FeedbackButton'

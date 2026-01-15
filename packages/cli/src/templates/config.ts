@@ -1,4 +1,4 @@
-export const nextstackProviderSetup = (authProvider: string) => `import { NextstackProvider } from '@nextstack/core'
+export const nextstackProviderSetup = (authProvider: string) => `import { NextstackProvider } from '@nextdevx/core'
 ${getAuthImport(authProvider)}
 import { prisma } from '@/lib/prisma'
 
@@ -23,12 +23,12 @@ export function Providers({ children }: { children: React.ReactNode }) {
 function getAuthImport(provider: string): string {
   switch (provider) {
     case 'supabase':
-      return `import { createSupabaseAuthAdapter } from '@nextstack/core'
+      return `import { createSupabaseAuthAdapter } from '@nextdevx/core'
 import { createClient } from '@/lib/supabase/server'`
     case 'clerk':
-      return `import { createClerkAuthAdapter } from '@nextstack/core'`
+      return `import { createClerkAuthAdapter } from '@nextdevx/core'`
     case 'next-auth':
-      return `import { createNextAuthAdapter } from '@nextstack/core'
+      return `import { createNextAuthAdapter } from '@nextdevx/core'
 import { authOptions } from '@/lib/auth'`
     default:
       return ''
@@ -50,7 +50,7 @@ function getAuthAdapter(provider: string): string {
 
 export const prismaSchemaAdditions: Record<string, string> = {
   feedback: `
-// ====== @nextstack/feedback ======
+// ====== @nextdevx/feedback ======
 // Copy these models to your schema.prisma
 
 model Feedback {
@@ -126,7 +126,7 @@ model IssueTrackerConfig {
 `,
 
   'whats-new': `
-// ====== @nextstack/whats-new ======
+// ====== @nextdevx/whats-new ======
 // Copy these models to your schema.prisma
 
 model WhatsNewEntry {
@@ -185,7 +185,7 @@ model WhatsNewUserVisit {
 `,
 
   audit: `
-// ====== @nextstack/audit ======
+// ====== @nextdevx/audit ======
 // Copy this model to your schema.prisma
 
 model AuditLog {

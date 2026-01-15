@@ -22,7 +22,7 @@ export interface FeatureFlags {
 }
 
 /**
- * Main configuration for @nextstack packages
+ * Main configuration for @nextdevx packages
  */
 export interface NextstackConfig {
   /** Auth adapter instance */

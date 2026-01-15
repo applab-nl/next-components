@@ -26,7 +26,7 @@ export interface DevInfoResponse {
  * @example
  * ```ts
  * // app/api/dev/info/route.ts
- * import { createDevInfoHandler } from '@nextstack/devtools/api'
+ * import { createDevInfoHandler } from '@nextdevx/devtools/api'
  *
  * export const GET = createDevInfoHandler({
  *   includeGitBranch: true,

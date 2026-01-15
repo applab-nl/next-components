@@ -1,5 +1,5 @@
 export const feedbackApiRoute = `import { NextRequest, NextResponse } from 'next/server'
-import { createFeedbackService } from '@nextstack/feedback'
+import { createFeedbackService } from '@nextdevx/feedback'
 import { prisma } from '@/lib/prisma'
 import { auth } from '@/lib/auth'
 
@@ -32,7 +32,7 @@ export async function POST(req: NextRequest) {
 `
 
 export const feedbackVoteRoute = `import { NextRequest, NextResponse } from 'next/server'
-import { createFeedbackService } from '@nextstack/feedback'
+import { createFeedbackService } from '@nextdevx/feedback'
 import { prisma } from '@/lib/prisma'
 import { auth } from '@/lib/auth'
 
@@ -57,7 +57,7 @@ export async function POST(
 `
 
 export const suggestionsRoute = `import { NextRequest, NextResponse } from 'next/server'
-import { createFeedbackService } from '@nextstack/feedback'
+import { createFeedbackService } from '@nextdevx/feedback'
 import { prisma } from '@/lib/prisma'
 import { auth } from '@/lib/auth'
 

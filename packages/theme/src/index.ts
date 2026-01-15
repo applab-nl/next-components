@@ -1,4 +1,4 @@
-// @nextstack/theme - Theme management
+// @nextdevx/theme - Theme management
 
 export { ThemeProvider } from './providers/ThemeProvider'
 export { ThemeToggle } from './components/ThemeToggle'

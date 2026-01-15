@@ -1,7 +1,23 @@
 {
-  "name": "@nextstack/whats-new",
+  "name": "@nextdevx/whats-new",
   "version": "0.1.0",
   "description": "What's new / changelog component with voting and feedback linking",
+  "license": "MIT",
+  "author": "Dylan van Iersel",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/applab-nl/next-components.git",
+    "directory": "packages/whats-new"
+  },
+  "homepage": "https://github.com/applab-nl/next-components/tree/main/packages/whats-new#readme",
+  "bugs": {
+    "url": "https://github.com/applab-nl/next-components/issues"
+  },
+  "keywords": ["nextjs", "react", "changelog", "whats-new", "release-notes", "voting"],
+  "publishConfig": {
+    "access": "public"
+  },
+  "sideEffects": false,
   "type": "module",
   "main": "./dist/index.js",
   "module": "./dist/index.js",
@@ -26,7 +42,7 @@
     "clean": "rm -rf dist .turbo"
   },
   "dependencies": {
-    "@nextstack/core": "workspace:*"
+    "@nextdevx/core": "workspace:*"
   },
   "peerDependencies": {
     "@prisma/client": ">=5.0.0",

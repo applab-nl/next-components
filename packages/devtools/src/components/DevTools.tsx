@@ -12,8 +12,8 @@ import {
   Check,
   Copy,
 } from 'lucide-react'
-import { useAuthOptional } from '@nextstack/core'
-import { ElementPicker, type ElementInfo } from '@nextstack/core/element-picker'
+import { useAuthOptional } from '@nextdevx/core'
+import { ElementPicker, type ElementInfo } from '@nextdevx/core/element-picker'
 import { isLocalhost, getEnvironmentName } from '../utils/environment'
 import { ElementCopyDialog } from './ElementCopyDialog'
 

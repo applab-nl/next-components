@@ -18,7 +18,7 @@ const PACKAGES = [
 ]
 
 export async function initCommand() {
-  console.log(pc.bold('\n@nextstack initialization\n'))
+  console.log(pc.bold('\n@nextdevx initialization\n'))
 
   // Detect project root
   const projectRoot = process.cwd()
@@ -28,7 +28,7 @@ export async function initCommand() {
     console.log(pc.yellow('⚠ Could not detect Next.js App Router structure.'))
     console.log(pc.dim('Make sure you are in a Next.js project root with an app/ directory.\n'))
   } else if (router === 'pages') {
-    console.log(pc.yellow('⚠ Pages Router detected. @nextstack packages require App Router.\n'))
+    console.log(pc.yellow('⚠ Pages Router detected. @nextdevx packages require App Router.\n'))
   } else {
     console.log(pc.dim(`Detected: App Router\n`))
   }
@@ -39,7 +39,7 @@ export async function initCommand() {
     name: 'packages',
     message: 'Which packages do you want to install?',
     choices: PACKAGES.map((pkg) => ({
-      title: `@nextstack/${pkg.name}`,
+      title: `@nextdevx/${pkg.name}`,
       value: pkg.name,
       description: pkg.description,
     })),
@@ -93,9 +93,9 @@ export async function initCommand() {
   // Print dependencies to add
   console.log(pc.cyan('Add these dependencies to your package.json:'))
   console.log(pc.dim('  "dependencies": {'))
-  console.log(pc.dim('    "@nextstack/core": "github:nextstack-dev/next-components#main",'))
+  console.log(pc.dim('    "@nextdevx/core": "github:nextstack-dev/next-components#main",'))
   for (const packageName of packages) {
-    console.log(pc.dim(`    "@nextstack/${packageName}": "github:nextstack-dev/next-components#main",`))
+    console.log(pc.dim(`    "@nextdevx/${packageName}": "github:nextstack-dev/next-components#main",`))
   }
   console.log(pc.dim('  }'))
 

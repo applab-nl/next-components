@@ -3,7 +3,7 @@
 import { useState, useEffect, useMemo, useCallback } from 'react'
 import { createPortal } from 'react-dom'
 import { X, ChevronRight, ChevronDown, Check, Copy } from 'lucide-react'
-import type { ElementInfo } from '@nextstack/core/element-picker'
+import type { ElementInfo } from '@nextdevx/core/element-picker'
 
 export interface ElementCopyDialogTranslations {
   copyDialogTitle?: string

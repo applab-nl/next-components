@@ -1,5 +1,5 @@
 import type { PrismaClient } from '@prisma/client'
-import { getRequestMetadata } from '@nextstack/core'
+import { getRequestMetadata } from '@nextdevx/core'
 import type { AuditLogInput, AuditLog, AuditAction } from '../types'
 import { sanitizeChanges } from './sanitize'
 
